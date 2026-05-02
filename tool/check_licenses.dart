@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-const Set<String> allowedSpdx = <String>{'MIT', 'BSD-2-Clause', 'BSD-3-Clause', 'Apache-2.0', 'ISC', 'Zlib', 'CC0-1.0', 'Unlicense'};
+const Set<String> allowedSpdx = <String>{'MIT', 'BSD-2-Clause', 'BSD-3-Clause', 'Apache-2.0', 'MPL-2.0', 'ISC', 'Zlib', 'CC0-1.0', 'Unlicense'};
 
 const List<String> forbiddenLicenseMarkers = <String>[
   'GNU GENERAL PUBLIC LICENSE',
@@ -160,6 +160,9 @@ String? _resolveSpdx(String packageName, String? rootUri, File packageConfigFile
     if (lower.contains('redistribution and use in source and binary forms')) {
       return lower.contains('neither the name') ? 'BSD-3-Clause' : 'BSD-2-Clause';
     }
+    if (lower.contains('mozilla public license') && lower.contains('version 2.0')) {
+      return 'MPL-2.0';
+    }
     if (lower.contains('isc license')) {
       return 'ISC';
     }
@@ -183,7 +186,12 @@ String? _scanForbiddenLicenseMarkers(Directory packageDir) {
     if (!license.existsSync()) {
       continue;
     }
-    final String upper = _readLicenseHead(license).toUpperCase();
+    final String licenseHead = _readLicenseHead(license);
+    final String lower = licenseHead.toLowerCase();
+    if (lower.contains('mozilla public license') && lower.contains('version 2.0')) {
+      continue;
+    }
+    final String upper = licenseHead.toUpperCase();
     for (final String marker in forbiddenLicenseMarkers) {
       if (upper.contains(marker)) {
         return marker;
