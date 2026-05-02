@@ -10,19 +10,22 @@ The POC is intentionally narrow: one bundled Melun PMTiles file, one map screen,
 
 Produce a defensible yes/no answer: does the fog stay visually locked to the map during pan, zoom, and combined pan+zoom gestures at 30+ fps on iOS?
 
+## Current State
+
+Phase 2 is complete at the code-verification level: the app opens the copied Melun PMTiles path through `flutter_map`/`vector_map_tiles`, mounts the atmospheric fog as a same-stack `FlutterMap` child, uses the parent-derived SDF/projection/uniform pipeline, and exposes map-only, latest-fix blue dot, reveal-disc, and recenter surfaces. Real iOS visual sync and fps evidence remains Phase 4 UAT.
+
 ## Requirements
 
 ### Validated
 
-(None yet - ship to validate)
+- [x] Create a Flutter app that uses `flutter_map` as the map renderer instead of MapLibre. Validated in Phase 2: PMTiles-backed `FlutterMap` is wired from the copied local map path.
+- [x] Render Melun vector tiles from the bundled `C:\claude_checkouts\countries-pmtiles\Fra_Melun.pmtile` file. Validated in Phase 2: the app opens the Phase 1 copied filesystem path through `vector_map_tiles_pmtiles`.
+- [x] Render the atmospheric fog shader as a `flutter_map` custom Flutter layer in the same frame pipeline as the map. Validated in Phase 2: `FogLayer` is mounted inside `FlutterMap.children` after `VectorTileLayer`.
+- [x] Reuse the battle-tested MirkFall fog/SDF/projection code rather than reimplementing it from scratch. Validated in Phase 2: reveal discs, viewport bbox, 256x256 metre-space SDF, projection, clip path, 41-slot uniforms, triangle-wave animation, and constants are ported/adapted with tests.
 
 ### Active
 
-- [ ] Create a Flutter app that uses `flutter_map` as the map renderer instead of MapLibre.
-- [ ] Render Melun vector tiles from the bundled `C:\claude_checkouts\countries-pmtiles\Fra_Melun.pmtile` file.
-- [ ] Render the atmospheric fog shader as a `flutter_map` custom Flutter layer in the same frame pipeline as the map.
-- [ ] Reuse the battle-tested MirkFall fog/SDF/projection code rather than reimplementing it from scratch.
-- [ ] Request foreground location permission and create 25 m reveal discs from GPS fixes.
+- [ ] Request foreground location permission and feed live GPS fixes into the Phase 2 in-memory 25 m reveal-disc pipeline.
 - [ ] Measure fog-map sync, gesture fps, static fps, SDF rebuild latency, map quality, and memory on iOS first.
 - [ ] Build downloadable unsigned iOS IPA and Android debug APK artifacts in GitHub Actions.
 
@@ -91,11 +94,11 @@ Research findings to carry into implementation:
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Test `flutter_map` first | It directly removes the split MapLibre-native versus Flutter-overlay rendering pipeline that caused BUG-014. | Pending |
-| Use `vector_map_tiles` and `vector_map_tiles_pmtiles` for the POC | They keep the map in Flutter and can read PMTiles, but performance is the primary risk to measure. | Pending |
-| Copy PMTiles asset to app support before opening | `vector_map_tiles_pmtiles` supports local filesystem paths, not Flutter bundled assets directly. | Pending |
-| Keep foreground-only GPS | The renderer question does not require background tracking and foreground permission avoids unnecessary iOS complexity. | Pending |
-| Reuse MirkFall fog/SDF code | The shader, SDF, uniforms, and reveal geometry are battle-tested; reinventing them would weaken the POC evidence. | Pending |
+| Test `flutter_map` first | It directly removes the split MapLibre-native versus Flutter-overlay rendering pipeline that caused BUG-014. | Code-level Phase 2 proof complete; real-device sync/fps UAT pending. |
+| Use `vector_map_tiles` and `vector_map_tiles_pmtiles` for the POC | They keep the map in Flutter and can read PMTiles, but performance is the primary risk to measure. | Implemented with resolver-coherent pins: `flutter_map 7.0.2`, `vector_map_tiles 8.0.0`, `vector_map_tiles_pmtiles 1.5.0`; performance UAT pending. |
+| Copy PMTiles asset to app support before opening | `vector_map_tiles_pmtiles` supports local filesystem paths, not Flutter bundled assets directly. | Validated in Phase 1 copy service and Phase 2 provider wiring. |
+| Keep foreground-only GPS | The renderer question does not require background tracking and foreground permission avoids unnecessary iOS complexity. | Phase 2 added injected latest-fix/reveal seams; Phase 3 owns permission/runtime flow. |
+| Reuse MirkFall fog/SDF code | The shader, SDF, uniforms, and reveal geometry are battle-tested; reinventing them would weaken the POC evidence. | Validated in Phase 2 with copied shader parity and focused fog infrastructure tests. |
 | Generate CI artifacts for iOS and Android | The user has no Mac, and real acceptance depends on sideloadable iOS UAT. | Pending |
 
 ## Evolution
@@ -116,4 +119,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-02 after initialization*
+*Last updated: 2026-05-02 after Phase 2 verification*
