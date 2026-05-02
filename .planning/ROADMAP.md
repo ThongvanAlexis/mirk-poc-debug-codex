@@ -112,13 +112,13 @@ Cross-cutting constraints:
 
 Plans:
 - **Wave 1**
-  - [ ] `03-01-PLAN.md` - Add exact-pinned permission/share dependencies, foreground-only platform metadata, iOS Podfile macro, and privacy manifest guards.
+  - [x] `03-01-PLAN.md` - Add exact-pinned permission/share dependencies, foreground-only platform metadata, iOS Podfile macro, and privacy manifest guards.
 - **Wave 2** *(blocked on Wave 1 completion)*
-  - [ ] `03-02-PLAN.md` - Implement synchronous JSONL file logging, lifecycle flush hook, pruning, frame timing aggregation, and Phase 4 evidence markers.
+  - [x] `03-02-PLAN.md` - Implement synchronous JSONL file logging, lifecycle flush hook, pruning, frame timing aggregation, and Phase 4 evidence markers.
 - **Wave 3** *(blocked on Waves 1-2 completion)*
-  - [ ] `03-03-PLAN.md` - Add permission-gated runtime, denied/settings recovery, foreground GPS stream into `GeoFix`, and compact active-log sharing.
+  - [x] `03-03-PLAN.md` - Add permission-gated runtime, denied/settings recovery, foreground GPS stream into `GeoFix`, and compact active-log sharing.
 - **Wave 4** *(blocked on Waves 1-3 completion)*
-  - [ ] `03-04-PLAN.md` - Add Android debug APK and unsigned iOS IPA GitHub Actions artifact jobs, strengthen guards, and update traceability after execution.
+  - [x] `03-04-PLAN.md` - Add Android debug APK and unsigned iOS IPA GitHub Actions artifact jobs, strengthen guards, and update traceability after execution.
 
 Cross-cutting constraints:
 - Request only foreground/when-in-use location; do not add background location, notification permission, foreground services, or `UIBackgroundModes`.

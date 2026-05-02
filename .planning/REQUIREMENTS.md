@@ -34,28 +34,28 @@
 
 ### Location And Interaction
 
-- [ ] **LOC-01**: On first launch, user sees a foreground location permission rationale screen before the map.
-- [ ] **LOC-02**: On grant, user reaches the map and the app starts foreground location updates.
-- [ ] **LOC-03**: On deny or permanent deny, user sees a denied state with a system settings action.
+- [x] **LOC-01**: On first launch, user sees a foreground location permission rationale screen before the map.
+- [x] **LOC-02**: On grant, user reaches the map and the app starts foreground location updates.
+- [x] **LOC-03**: On deny or permanent deny, user sees a denied state with a system settings action.
 - [x] **LOC-04**: App renders the latest GPS position as a blue dot above the fog.
 - [x] **LOC-05**: App creates an in-memory 25 m reveal disc for each accepted GPS fix.
 - [x] **LOC-06**: User can tap a recenter control that animates the map to the latest GPS fix at zoom `15`.
 
 ### Logging And Diagnostics
 
-- [ ] **LOG-01**: App bootstraps a file logger before `runApp()` and writes JSONL logs under `<app_documents_dir>/logs/`.
-- [ ] **LOG-02**: Logger writes synchronously with `RandomAccessFile.writeStringSync` and `flushSync`, not async `IOSink`.
-- [ ] **LOG-03**: Logger prunes old logs to a 10 MB cap without deleting the active log file.
-- [ ] **LOG-04**: User can share the active log file through the platform share sheet.
-- [ ] **LOG-05**: App logs tile provider init time, PMTiles copy/open events, shader load time, SDF rebuild duration, GPS fix ingestion, frame timing markers, permission outcomes, and share-log outcomes.
+- [x] **LOG-01**: App bootstraps a file logger before `runApp()` and writes JSONL logs under `<app_documents_dir>/logs/`.
+- [x] **LOG-02**: Logger writes synchronously with `RandomAccessFile.writeStringSync` and `flushSync`, not async `IOSink`.
+- [x] **LOG-03**: Logger prunes old logs to a 10 MB cap without deleting the active log file.
+- [x] **LOG-04**: User can share the active log file through the platform share sheet.
+- [x] **LOG-05**: App logs tile provider init time, PMTiles copy/open events, shader load time, SDF rebuild duration, GPS fix ingestion, frame timing markers, permission outcomes, and share-log outcomes.
 
 ### iOS And Android Build Artifacts
 
 - [x] **CI-01**: GitHub Actions lint job runs `flutter pub get`, format check with line length 160, analyze with fatal infos/warnings, dependency/license/header checks, and tests.
-- [ ] **CI-02**: GitHub Actions Android job builds `flutter build apk --debug` and uploads a downloadable APK artifact.
-- [ ] **CI-03**: GitHub Actions iOS job runs on macOS, builds `flutter build ios --no-codesign`, packages `Payload/Runner.app` into an unsigned `.ipa`, and uploads it.
-- [ ] **CI-04**: iOS platform files include a Podfile with the location permission macro required by `permission_handler`.
-- [ ] **CI-05**: iOS platform files include SideStore-safe `CFBundleName`, location usage description, and required privacy manifest entries for file timestamp and user defaults APIs.
+- [x] **CI-02**: GitHub Actions Android job builds `flutter build apk --debug` and uploads a downloadable APK artifact.
+- [x] **CI-03**: GitHub Actions iOS job runs on macOS, builds `flutter build ios --no-codesign`, packages `Payload/Runner.app` into an unsigned `.ipa`, and uploads it.
+- [x] **CI-04**: iOS platform files include a Podfile with the location permission macro required by `permission_handler`.
+- [x] **CI-05**: iOS platform files include SideStore-safe `CFBundleName`, location usage description, and required privacy manifest entries for file timestamp and user defaults APIs.
 
 ### UAT And Decision Evidence
 
@@ -119,22 +119,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOG-05 | Phase 2 | Complete |
 | FOG-06 | Phase 2 | Complete |
 | FOG-07 | Phase 2 | Complete |
-| LOC-01 | Phase 3 | Pending |
-| LOC-02 | Phase 3 | Pending |
-| LOC-03 | Phase 3 | Pending |
+| LOC-01 | Phase 3 | Complete |
+| LOC-02 | Phase 3 | Complete |
+| LOC-03 | Phase 3 | Complete |
 | LOC-04 | Phase 2 | Complete |
 | LOC-05 | Phase 2 | Complete |
 | LOC-06 | Phase 2 | Complete |
-| LOG-01 | Phase 3 | Pending |
-| LOG-02 | Phase 3 | Pending |
-| LOG-03 | Phase 3 | Pending |
-| LOG-04 | Phase 3 | Pending |
-| LOG-05 | Phase 3 | Pending |
+| LOG-01 | Phase 3 | Complete |
+| LOG-02 | Phase 3 | Complete |
+| LOG-03 | Phase 3 | Complete |
+| LOG-04 | Phase 3 | Complete |
+| LOG-05 | Phase 3 | Complete |
 | CI-01 | Phase 1 | Complete |
-| CI-02 | Phase 3 | Pending |
-| CI-03 | Phase 3 | Pending |
-| CI-04 | Phase 3 | Pending |
-| CI-05 | Phase 3 | Pending |
+| CI-02 | Phase 3 | Complete |
+| CI-03 | Phase 3 | Complete |
+| CI-04 | Phase 3 | Complete |
+| CI-05 | Phase 3 | Complete |
 | UAT-01 | Phase 4 | Pending |
 | UAT-02 | Phase 4 | Pending |
 | UAT-03 | Phase 4 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after Plan 02-04 execution*
+*Last updated: 2026-05-02 after Phase 3 execution*
