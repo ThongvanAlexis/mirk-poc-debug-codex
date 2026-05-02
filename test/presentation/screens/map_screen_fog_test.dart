@@ -22,7 +22,7 @@ void main() {
   test('builds FlutterMap children in tile, fog, blue-dot order', () {
     final vectorIndex = source.indexOf('VectorTileLayer(');
     final fogIndex = source.indexOf('FogLayer(');
-    final blueDotIndex = source.indexOf('CircleLayer<Object>(');
+    final blueDotIndex = source.indexOf('BlueDotMarker.build');
 
     expect(vectorIndex, isNonNegative);
     expect(fogIndex, greaterThan(vectorIndex));
@@ -40,5 +40,11 @@ void main() {
     expect(source, contains('createFogSdfCache()'));
     expect(source, contains('createPocMapChildren('));
     expect(source, isNot(contains('Positioned.fill(child: FogLayer')));
+  });
+
+  test('wires recenter to the latest fix at the POC zoom', () {
+    expect(source, contains('RecenterFab('));
+    expect(source, contains('_recenterToLatestFix'));
+    expect(source, contains('_mapController.move(fix.latLng, kPocRecenterZoom)'));
   });
 }
