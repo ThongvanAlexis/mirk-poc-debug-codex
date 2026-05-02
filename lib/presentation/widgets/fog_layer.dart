@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:logging/logging.dart';
 
 import '../../config/constants.dart';
 import '../../domain/mirk/mirk_viewport_bbox.dart';
@@ -98,6 +99,8 @@ class FogLayer extends StatefulWidget {
 }
 
 class _FogLayerState extends State<FogLayer> with SingleTickerProviderStateMixin {
+  static final Logger _log = Logger('presentation.fog_layer');
+
   late final Ticker _ticker;
   final Stopwatch _wallClock = Stopwatch()..start();
   final _RepaintSignal _repaint = _RepaintSignal();
@@ -175,7 +178,9 @@ class _FogLayerState extends State<FogLayer> with SingleTickerProviderStateMixin
         _currentSdfKey = key;
         _currentSdfImage = image;
       });
-    } on Object {
+      _log.fine('sdf_image_ready key=${key.hashCode.toUnsigned(32).toRadixString(16)} discCount=${discs.length}');
+    } on Object catch (error, stackTrace) {
+      _log.warning('sdf_image_unavailable key=${key.hashCode.toUnsigned(32).toRadixString(16)} discCount=${discs.length}', error, stackTrace);
       if (!mounted || _requestedSdfKey != key) return;
       setState(() {
         _currentSdfKey = null;

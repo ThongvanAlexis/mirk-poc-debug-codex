@@ -2,6 +2,7 @@
 // Licensed under the Good Old Software License v1.0
 // See LICENSE file for details
 
+import 'package:logging/logging.dart';
 import 'package:mirk_poc_debug/domain/mirk/mirk_viewport_bbox.dart';
 import 'package:mirk_poc_debug/domain/revealed/reveal_disc.dart';
 
@@ -14,6 +15,8 @@ typedef SdfCacheDisposer<T extends Object> = void Function(T image);
 /// layer can use `SdfCache<ui.Image>` with `disposeImage: (image) => image.dispose()`.
 class SdfCache<T extends Object> {
   SdfCache({required SdfCacheBuilder<T> buildImage, SdfCacheDisposer<T>? disposeImage}) : _buildImage = buildImage, _disposeImage = disposeImage;
+
+  static final Logger _log = Logger('infrastructure.mirk.sdf_cache');
 
   final SdfCacheBuilder<T> _buildImage;
   final SdfCacheDisposer<T>? _disposeImage;
@@ -28,26 +31,44 @@ class SdfCache<T extends Object> {
 
     final discSnapshot = discs.toList(growable: false);
     final key = SdfCacheKey.from(discs: discSnapshot, viewport: viewport).value;
+    final keyMarker = _keyMarker(key);
     final cachedImage = _cachedImage;
-    if (cachedImage != null && _cachedKey == key) return Future<T>.value(cachedImage);
+    if (cachedImage != null && _cachedKey == key) {
+      _log.fine('sdf_cache_hit key=$keyMarker discCount=${discSnapshot.length}');
+      return Future<T>.value(cachedImage);
+    }
 
     final inFlight = _inFlight[key];
-    if (inFlight != null) return inFlight;
+    if (inFlight != null) {
+      _log.fine('sdf_cache_in_flight key=$keyMarker discCount=${discSnapshot.length}');
+      return inFlight;
+    }
 
     late final Future<T> future;
+    final Stopwatch stopwatch = Stopwatch()..start();
+    _log.info('sdf_build_start key=$keyMarker discCount=${discSnapshot.length}');
     future = _buildImage(discs: discSnapshot, viewport: viewport)
-        .then((image) {
-          if (_disposed) {
-            _dispose(image);
-            throw StateError('SdfCache was disposed before the SDF build completed');
-          }
+        .then(
+          (image) {
+            stopwatch.stop();
+            if (_disposed) {
+              _dispose(image);
+              throw StateError('SdfCache was disposed before the SDF build completed');
+            }
 
-          final previousImage = _cachedImage;
-          if (previousImage != null && !identical(previousImage, image)) _dispose(previousImage);
-          _cachedKey = key;
-          _cachedImage = image;
-          return image;
-        })
+            final previousImage = _cachedImage;
+            if (previousImage != null && !identical(previousImage, image)) _dispose(previousImage);
+            _cachedKey = key;
+            _cachedImage = image;
+            _log.info('sdf_build_success key=$keyMarker discCount=${discSnapshot.length} elapsedMs=${stopwatch.elapsedMilliseconds}');
+            return image;
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            stopwatch.stop();
+            _log.warning('sdf_build_failure key=$keyMarker discCount=${discSnapshot.length} elapsedMs=${stopwatch.elapsedMilliseconds}', error, stackTrace);
+            Error.throwWithStackTrace(error, stackTrace);
+          },
+        )
         .whenComplete(() {
           if (identical(_inFlight[key], future)) _inFlight.remove(key);
         });
@@ -71,6 +92,8 @@ class SdfCache<T extends Object> {
   void _dispose(T image) {
     _disposeImage?.call(image);
   }
+
+  static String _keyMarker(String key) => key.hashCode.toUnsigned(32).toRadixString(16);
 }
 
 class SdfCacheKey {

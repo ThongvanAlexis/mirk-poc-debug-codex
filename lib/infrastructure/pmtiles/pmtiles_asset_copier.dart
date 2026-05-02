@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 
 import '../../config/constants.dart';
@@ -28,10 +29,14 @@ class PmtilesAssetCopier {
     : _assetLoader = assetLoader,
       _supportDirectoryProvider = supportDirectoryProvider;
 
+  static final Logger _log = Logger('infrastructure.pmtiles');
+
   final PmtilesAssetLoader _assetLoader;
   final PmtilesSupportDirectoryProvider _supportDirectoryProvider;
 
   Future<String> ensureCopied() async {
+    final Stopwatch stopwatch = Stopwatch()..start();
+    _log.info('pmtiles_copy_start asset=$kPmtilesBasename expectedBytes=$kPmtilesExpectedByteLength');
     try {
       final Directory supportDir = await _supportDirectoryProvider();
       final Directory mapsDir = Directory(p.join(supportDir.path, kPmtilesMapsSubdir));
@@ -39,10 +44,14 @@ class PmtilesAssetCopier {
 
       final File destination = File(p.join(mapsDir.path, kPmtilesBasename));
       if (await _isValidFile(destination)) {
+        _log.info(
+          'pmtiles_copy_skip_valid basename=${p.basename(destination.path)} bytes=$kPmtilesExpectedByteLength elapsedMs=${stopwatch.elapsedMilliseconds}',
+        );
         return destination.absolute.path;
       }
 
       final Uint8List bytes = await _assetLoader();
+      _log.info('pmtiles_asset_loaded basename=$kPmtilesBasename bytes=${bytes.length} elapsedMs=${stopwatch.elapsedMilliseconds}');
       _validateBytes(bytes, 'bundled asset');
 
       final File temp = File('${destination.path}.tmp');
@@ -59,10 +68,13 @@ class PmtilesAssetCopier {
         await destination.delete();
       }
       final File copied = await temp.rename(destination.path);
+      _log.info('pmtiles_copy_success basename=${p.basename(copied.path)} bytes=${bytes.length} elapsedMs=${stopwatch.elapsedMilliseconds}');
       return copied.absolute.path;
-    } on PmtilesAssetCopyException {
+    } on PmtilesAssetCopyException catch (error, stackTrace) {
+      _log.warning('pmtiles_copy_failure elapsedMs=${stopwatch.elapsedMilliseconds} reason=${error.message}', error, stackTrace);
       rethrow;
-    } on Object catch (error) {
+    } on Object catch (error, stackTrace) {
+      _log.warning('pmtiles_copy_failure elapsedMs=${stopwatch.elapsedMilliseconds}', error, stackTrace);
       throw PmtilesAssetCopyException('Could not copy PMTiles asset to app support.', error);
     }
   }

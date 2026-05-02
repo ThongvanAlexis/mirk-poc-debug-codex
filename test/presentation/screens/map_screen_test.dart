@@ -3,6 +3,7 @@
 // See LICENSE file for details
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -128,6 +129,17 @@ void main() {
 
     expect(providerWasOpened, isFalse);
     expect(find.text('Map open failed'), findsOneWidget);
+  });
+
+  test('keeps Phase 4 map evidence markers wired in source', () {
+    final String source = File('lib/presentation/screens/map_screen.dart').readAsStringSync();
+
+    expect(source, contains('FrameTimingLogger'));
+    expect(source, contains('tile_provider_open_start'));
+    expect(source, contains('tile_provider_open_success'));
+    expect(source, contains('fog_shader_load_success'));
+    expect(source, contains('map_display_mode_changed'));
+    expect(source, contains('map_event type='));
   });
 }
 

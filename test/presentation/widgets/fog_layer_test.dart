@@ -39,4 +39,10 @@ void main() {
   test('does not isolate fog from the map repaint pipeline', () {
     expect(source, isNot(contains('RepaintBoundary')));
   });
+
+  test('logs SDF image readiness and failure markers', () {
+    expect(source, contains('presentation.fog_layer'));
+    expect(source, contains('sdf_image_ready'));
+    expect(source, contains('sdf_image_unavailable'));
+  });
 }
