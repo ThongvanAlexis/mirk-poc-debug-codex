@@ -14,6 +14,8 @@ void main() {
     late String iosProject;
     late String iosInfoPlist;
     late String iosPodfile;
+    late File iosPrivacyManifestFile;
+    late String iosPrivacyManifest;
 
     setUpAll(() {
       androidGradle = File(p.join('android', 'app', 'build.gradle.kts')).readAsStringSync();
@@ -21,6 +23,8 @@ void main() {
       iosProject = File(p.join('ios', 'Runner.xcodeproj', 'project.pbxproj')).readAsStringSync();
       iosInfoPlist = File(p.join('ios', 'Runner', 'Info.plist')).readAsStringSync();
       iosPodfile = File(p.join('ios', 'Podfile')).readAsStringSync();
+      iosPrivacyManifestFile = File(p.join('ios', 'Runner', 'PrivacyInfo.xcprivacy'));
+      iosPrivacyManifest = iosPrivacyManifestFile.readAsStringSync();
     });
 
     test('locks Android application ID and display name', () {
@@ -72,6 +76,15 @@ void main() {
       expect(androidManifest, isNot(contains('android.permission.FOREGROUND_SERVICE')));
       expect(androidManifest, isNot(contains('android.permission.FOREGROUND_SERVICE_LOCATION')));
       expect(androidManifest, isNot(contains('android.permission.POST_NOTIFICATIONS')));
+    });
+
+    test('declares required-reason APIs in the iOS privacy manifest', () {
+      expect(iosPrivacyManifestFile.existsSync(), isTrue);
+      expect(iosPrivacyManifest, contains('NSPrivacyAccessedAPICategoryFileTimestamp'));
+      expect(iosPrivacyManifest, contains('C617.1'));
+      expect(iosPrivacyManifest, contains('NSPrivacyAccessedAPICategoryUserDefaults'));
+      expect(iosPrivacyManifest, contains('CA92.1'));
+      expect(iosProject, contains('PrivacyInfo.xcprivacy in Resources'));
     });
   });
 }
