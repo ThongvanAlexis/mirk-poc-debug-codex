@@ -24,14 +24,14 @@ void main() {
   test('empty disc list leaves the whole viewport fogged', () {
     final path = buildViewportFogClipPathFromDiscs(discs: const <RevealDisc>[], viewport: viewport, canvasSize: canvasSize);
 
-    expect(path.contains(const Offset(0, 0)), isTrue);
+    expect(path.contains(const Offset(1, 1)), isTrue);
     expect(path.contains(const Offset(100, 100)), isTrue);
   });
 
   test('subtracts reveal-disc circles from the viewport rect', () {
     final path = buildViewportFogClipPathFromDiscs(discs: <RevealDisc>[disc()], viewport: viewport, canvasSize: canvasSize);
 
-    expect(path.contains(const Offset(0, 0)), isTrue);
+    expect(path.contains(const Offset(1, 1)), isTrue);
     expect(path.contains(const Offset(100, 100)), isFalse);
   });
 
