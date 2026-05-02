@@ -6,7 +6,7 @@
 
 ```text
 FlutterMap
-  VectorTileLayer(PMTools provider -> Melun PMTiles on filesystem)
+  VectorTileLayer(PMTiles provider -> Melun PMTiles on filesystem)
   FogLayer(CustomPainter + FragmentShader + SDF sampler)
   MarkerLayer(user location)
   Floating controls
