@@ -37,7 +37,7 @@ void main() {
 
   test('owns SDF cache and reveal repository in MapScreen rather than an external overlay', () {
     expect(source, contains('SdfCache<ui.Image>'));
-    expect(source, contains('RevealedSdfBuilder'));
+    expect(source, contains('createFogSdfCache()'));
     expect(source, contains('createPocMapChildren('));
     expect(source, isNot(contains('Positioned.fill(child: FogLayer')));
   });

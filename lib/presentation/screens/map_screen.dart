@@ -3,6 +3,7 @@
 // See LICENSE file for details
 
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -16,6 +17,8 @@ import '../../domain/location/geo_fix.dart';
 import '../../domain/map/map_screen_services.dart';
 import '../../domain/revealed/reveal_disc_repository.dart';
 import '../../infrastructure/map/poc_map_theme.dart';
+import '../../infrastructure/mirk/sdf/sdf_cache.dart';
+import '../widgets/fog_layer.dart';
 import '../widgets/map_mode_toggle.dart';
 
 class MapScreen extends StatefulWidget {
@@ -33,8 +36,10 @@ class _MapScreenState extends State<MapScreen> {
   late final Future<VectorTileProvider> _providerFuture;
   late final RevealDiscRepository _revealDiscRepository;
   late final bool _ownsRevealDiscRepository;
+  late final SdfCache<ui.Image> _sdfCache;
   late MapDisplayMode _mode;
   VectorTileProvider? _openedProvider;
+  ui.FragmentShader? _fogShader;
   GeoFix? _latestFix;
   StreamSubscription<GeoFix>? _latestFixSubscription;
 
@@ -46,12 +51,14 @@ class _MapScreenState extends State<MapScreen> {
     _mode = widget.services.initialDisplayMode;
     _revealDiscRepository = widget.services.revealDiscRepository ?? RevealDiscRepository();
     _ownsRevealDiscRepository = widget.services.revealDiscRepository == null;
+    _sdfCache = createFogSdfCache();
     final initialLatestFix = widget.services.initialLatestFix;
     if (initialLatestFix != null && _revealDiscRepository.appendFix(initialLatestFix)) {
       _latestFix = initialLatestFix;
     }
     _latestFixSubscription = widget.services.latestFixStream?.listen(_acceptLatestFix);
     _providerFuture = _openProvider();
+    _loadFogShader().ignore();
   }
 
   @override
@@ -65,6 +72,7 @@ class _MapScreenState extends State<MapScreen> {
     if (_ownsRevealDiscRepository) {
       _revealDiscRepository.dispose();
     }
+    _sdfCache.dispose();
     _mapController.dispose();
     super.dispose();
   }
@@ -87,7 +95,15 @@ class _MapScreenState extends State<MapScreen> {
                 child: FlutterMap(
                   mapController: _mapController,
                   options: createPocMapOptions(),
-                  children: createPocMapChildren(tileProvider: snapshot.requireData, theme: _theme),
+                  children: createPocMapChildren(
+                    tileProvider: snapshot.requireData,
+                    theme: _theme,
+                    displayMode: _mode,
+                    revealDiscRepository: _revealDiscRepository,
+                    fogShader: _fogShader,
+                    sdfCache: _sdfCache,
+                    latestFix: _latestFix,
+                  ),
                 ),
               ),
               Positioned(
@@ -125,6 +141,22 @@ class _MapScreenState extends State<MapScreen> {
     return provider;
   }
 
+  Future<void> _loadFogShader() async {
+    try {
+      final FogProgramLoader loader = widget.services.fogProgramLoader ?? () => ui.FragmentProgram.fromAsset(kPocFogShaderAssetPath);
+      final program = await loader();
+      if (!mounted) return;
+      setState(() {
+        _fogShader = program.fragmentShader();
+      });
+    } on Object catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _fogShader = null;
+      });
+    }
+  }
+
   void _disposeProvider(VectorTileProvider provider) {
     final MapTileProviderDisposer? disposer = widget.services.tileProviderDisposer;
     if (disposer != null) {
@@ -157,12 +189,33 @@ MapOptions createPocMapOptions() {
 }
 
 @visibleForTesting
-List<Widget> createPocMapChildren({required VectorTileProvider tileProvider, required vtr.Theme theme}) {
-  return <Widget>[
+List<Widget> createPocMapChildren({
+  required VectorTileProvider tileProvider,
+  required vtr.Theme theme,
+  MapDisplayMode displayMode = MapDisplayMode.mapOnly,
+  RevealDiscRepository? revealDiscRepository,
+  ui.FragmentShader? fogShader,
+  SdfCache<ui.Image>? sdfCache,
+  GeoFix? latestFix,
+}) {
+  final children = <Widget>[
     VectorTileLayer(
       tileProviders: TileProviders(<String, VectorTileProvider>{kPocTileProviderSourceKey: tileProvider}),
       theme: theme,
       maximumZoom: kPocMaxZoom,
     ),
   ];
+  if (displayMode == MapDisplayMode.mapWithFog && revealDiscRepository != null && sdfCache != null) {
+    children.add(FogLayer(discRepository: revealDiscRepository, shader: fogShader, sdfCache: sdfCache));
+  }
+  if (latestFix != null) {
+    children.add(
+      CircleLayer<Object>(
+        circles: <CircleMarker<Object>>[
+          CircleMarker<Object>(point: latestFix.latLng, radius: 7.0, color: Colors.blue, borderStrokeWidth: 2.0, borderColor: Colors.white),
+        ],
+      ),
+    );
+  }
+  return children;
 }
