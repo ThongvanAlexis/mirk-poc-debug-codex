@@ -25,12 +25,12 @@
 ### Fog Rendering
 
 - [x] **FOG-01**: App includes `assets/shaders/atmospheric_fog.frag` copied from MirkFall without visual simplification.
-- [ ] **FOG-02**: App ports or minimally adapts MirkFall reveal disc, viewport bbox, SDF builder, projection, clip path, shader uniform, animation helper, and relevant fog constants.
+- [x] **FOG-02**: App ports or minimally adapts MirkFall reveal disc, viewport bbox, SDF builder, projection, clip path, shader uniform, animation helper, and relevant fog constants.
 - [ ] **FOG-03**: App renders the fog as a `flutter_map` custom Flutter layer in the same map child stack as the vector tiles.
-- [ ] **FOG-04**: Fog layer builds a 256x256 SDF image from reveal discs using metre-space distance.
-- [ ] **FOG-05**: Fog layer binds 41 float uniforms and one SDF sampler according to the MirkFall shader layout.
-- [ ] **FOG-06**: Fog layer clips the shader rect to unrevealed map area using reveal-disc screen geometry.
-- [ ] **FOG-07**: Fog animation uses the atmospheric defaults, including curl-scale triangle wave and identity SDF rect unless measurement proves a change is needed.
+- [x] **FOG-04**: Fog layer builds a 256x256 SDF image from reveal discs using metre-space distance.
+- [x] **FOG-05**: Fog layer binds 41 float uniforms and one SDF sampler according to the MirkFall shader layout.
+- [x] **FOG-06**: Fog layer clips the shader rect to unrevealed map area using reveal-disc screen geometry.
+- [x] **FOG-07**: Fog animation uses the atmospheric defaults, including curl-scale triangle wave and identity SDF rect unless measurement proves a change is needed.
 
 ### Location And Interaction
 
@@ -113,12 +113,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAP-05 | Phase 2 | Complete |
 | MAP-06 | Phase 2 | Complete |
 | FOG-01 | Phase 2 | Complete |
-| FOG-02 | Phase 2 | Pending |
+| FOG-02 | Phase 2 | Complete |
 | FOG-03 | Phase 2 | Pending |
-| FOG-04 | Phase 2 | Pending |
-| FOG-05 | Phase 2 | Pending |
-| FOG-06 | Phase 2 | Pending |
-| FOG-07 | Phase 2 | Pending |
+| FOG-04 | Phase 2 | Complete |
+| FOG-05 | Phase 2 | Complete |
+| FOG-06 | Phase 2 | Complete |
+| FOG-07 | Phase 2 | Complete |
 | LOC-01 | Phase 3 | Pending |
 | LOC-02 | Phase 3 | Pending |
 | LOC-03 | Phase 3 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after Plan 02-02 execution*
+*Last updated: 2026-05-02 after Plan 02-03 execution*

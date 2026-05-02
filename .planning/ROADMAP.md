@@ -78,7 +78,7 @@ Plans:
 - **Wave 2** *(blocked on Wave 1 completion)*
   - [x] `02-02-PLAN.md` - Render the copied Melun PMTiles file through `FlutterMap`/`VectorTileLayer`, add neutral styling, and expose map-only mode.
 - **Wave 3** *(blocked on Wave 1 completion)*
-  - [ ] `02-03-PLAN.md` - Port MirkFall reveal-disc, SDF, projection, clip-path, shader-uniform, animation, and SDF-cache infrastructure with tests.
+  - [x] `02-03-PLAN.md` - Port MirkFall reveal-disc, SDF, projection, clip-path, shader-uniform, animation, and SDF-cache infrastructure with tests.
 - **Wave 4** *(blocked on Waves 2-3 completion)*
   - [ ] `02-04-PLAN.md` - Mount `FogLayer` inside the same `FlutterMap` child stack, wire seeded/latest-fix reveal discs, blue dot, recenter, and final integration tests.
 
