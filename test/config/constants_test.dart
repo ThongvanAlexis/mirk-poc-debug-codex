@@ -24,6 +24,7 @@ void main() {
   });
 
   test('locks renderer-critical fog and SDF constants', () {
+    expect(kMaxLogsDirBytes, equals(10 * 1024 * 1024));
     expect(kPocFogShaderAssetPath, equals('assets/shaders/atmospheric_fog.frag'));
     expect(kPocRevealDiscRadiusMeters, equals(25.0));
     expect(kEarthRadiusMeters, equals(6371008.8));

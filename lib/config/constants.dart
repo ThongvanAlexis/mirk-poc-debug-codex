@@ -7,6 +7,7 @@ const String kPmtilesBasename = 'Fra_Melun.pmtile';
 const String kPmtilesMapsSubdir = 'maps';
 const int kPmtilesExpectedByteLength = 4176302;
 const String kPmtilesExpectedSha256 = '6bc39c03501d99dadc5c08994663fd07cdb18f6149fb5425c2aa933c7b09ddf1';
+const int kMaxLogsDirBytes = 10 * 1024 * 1024;
 
 const String kPocTileProviderSourceKey = 'protomaps';
 const double kPocInitialLatitude = 48.5397;
