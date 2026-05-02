@@ -108,6 +108,25 @@ Cross-cutting constraints:
 - Package IPA as `Payload/Runner.app` zipped to `.ipa`; SideStore will re-sign it.
 - Keep foreground-only location in this POC. Background tracking belongs to production migration, not this renderer test.
 
+**Plans:** 4 plans in 4 waves
+
+Plans:
+- **Wave 1**
+  - [ ] `03-01-PLAN.md` - Add exact-pinned permission/share dependencies, foreground-only platform metadata, iOS Podfile macro, and privacy manifest guards.
+- **Wave 2** *(blocked on Wave 1 completion)*
+  - [ ] `03-02-PLAN.md` - Implement synchronous JSONL file logging, lifecycle flush hook, pruning, frame timing aggregation, and Phase 4 evidence markers.
+- **Wave 3** *(blocked on Waves 1-2 completion)*
+  - [ ] `03-03-PLAN.md` - Add permission-gated runtime, denied/settings recovery, foreground GPS stream into `GeoFix`, and compact active-log sharing.
+- **Wave 4** *(blocked on Waves 1-3 completion)*
+  - [ ] `03-04-PLAN.md` - Add Android debug APK and unsigned iOS IPA GitHub Actions artifact jobs, strengthen guards, and update traceability after execution.
+
+Cross-cutting constraints:
+- Request only foreground/when-in-use location; do not add background location, notification permission, foreground services, or `UIBackgroundModes`.
+- Keep plugin coupling outside `MapScreen`, `FogLayer`, and reveal domain objects; feed live fixes through `MapScreenServices.latestFixStream`.
+- Use synchronous `RandomAccessFile.writeStringSync` plus `flushSync` for log records; do not use `IOSink`.
+- Keep map/fog testing UI compact: top-right mode toggle, bottom-right recenter, bottom-left share log, with the center gesture area clear.
+- Preserve all Phase 1 gates and exact dependency pins while adding APK/IPA artifact jobs.
+
 ## Phase 4: Device UAT And Decision
 
 **Goal:** Gather enough iOS-first evidence to decide whether MirkFall should migrate from MapLibre to `flutter_map`.
