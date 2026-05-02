@@ -76,7 +76,7 @@ Plans:
 - **Wave 1**
   - [x] `02-01-PLAN.md` - Add the resolver-coherent map/fog dependency graph, copy the atmospheric shader, and lock Phase 2 constants/audit data.
 - **Wave 2** *(blocked on Wave 1 completion)*
-  - [ ] `02-02-PLAN.md` - Render the copied Melun PMTiles file through `FlutterMap`/`VectorTileLayer`, add neutral styling, and expose map-only mode.
+  - [x] `02-02-PLAN.md` - Render the copied Melun PMTiles file through `FlutterMap`/`VectorTileLayer`, add neutral styling, and expose map-only mode.
 - **Wave 3** *(blocked on Wave 1 completion)*
   - [ ] `02-03-PLAN.md` - Port MirkFall reveal-disc, SDF, projection, clip-path, shader-uniform, animation, and SDF-cache infrastructure with tests.
 - **Wave 4** *(blocked on Waves 2-3 completion)*

@@ -17,10 +17,10 @@
 
 - [x] **MAP-01**: App bundles `Fra_Melun.pmtile` under app assets and includes it in `pubspec.yaml`.
 - [x] **MAP-02**: App copies the bundled PMTiles file to an app support filesystem path on first launch.
-- [ ] **MAP-03**: App loads Melun vector tiles through `vector_map_tiles_pmtiles` from the copied filesystem path.
-- [ ] **MAP-04**: User sees a `flutter_map` map centered on Melun at latitude `48.5397`, longitude `2.6553`, zoom `13`.
-- [ ] **MAP-05**: Map styling approximates MirkFall's neutral basemap colors for background, landcover, water, boundaries, and roads.
-- [ ] **MAP-06**: App can render the map without the fog layer for map-only performance comparison.
+- [x] **MAP-03**: App loads Melun vector tiles through `vector_map_tiles_pmtiles` from the copied filesystem path.
+- [x] **MAP-04**: User sees a `flutter_map` map centered on Melun at latitude `48.5397`, longitude `2.6553`, zoom `13`.
+- [x] **MAP-05**: Map styling approximates MirkFall's neutral basemap colors for background, landcover, water, boundaries, and roads.
+- [x] **MAP-06**: App can render the map without the fog layer for map-only performance comparison.
 
 ### Fog Rendering
 
@@ -108,10 +108,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOUND-05 | Phase 1 | Complete |
 | MAP-01 | Phase 1 | Complete |
 | MAP-02 | Phase 1 | Complete |
-| MAP-03 | Phase 2 | Pending |
-| MAP-04 | Phase 2 | Pending |
-| MAP-05 | Phase 2 | Pending |
-| MAP-06 | Phase 2 | Pending |
+| MAP-03 | Phase 2 | Complete |
+| MAP-04 | Phase 2 | Complete |
+| MAP-05 | Phase 2 | Complete |
+| MAP-06 | Phase 2 | Complete |
 | FOG-01 | Phase 2 | Complete |
 | FOG-02 | Phase 2 | Pending |
 | FOG-03 | Phase 2 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after Plan 02-01 execution*
+*Last updated: 2026-05-02 after Plan 02-02 execution*
