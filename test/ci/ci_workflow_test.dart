@@ -31,9 +31,19 @@ void main() {
     }
   });
 
-  test('does not build or upload IPA/APK artifacts in the gates-only workflow', () {
-    for (final String forbidden in <String>['flutter build apk', 'flutter build ios', 'flutter build ipa', 'upload-artifact', 'actions/upload-artifact']) {
-      expect(workflow, isNot(contains(forbidden)));
-    }
+  test('builds and uploads the Android debug APK after gates', () {
+    final int gatesIndex = workflow.indexOf('gates:');
+    final int androidIndex = workflow.indexOf('android-debug-apk:');
+
+    expect(gatesIndex, greaterThanOrEqualTo(0));
+    expect(androidIndex, greaterThan(gatesIndex));
+    expect(workflow, contains('runs-on: ubuntu-latest'));
+    expect(workflow, contains('needs: gates'));
+    expect(workflow, contains("flutter-version: '3.41.7'"));
+    expect(workflow, contains('flutter pub get'));
+    expect(workflow, contains('flutter build apk --debug'));
+    expect(workflow, contains('actions/upload-artifact@v4'));
+    expect(workflow, contains('name: MirkFall-POC-android-debug-apk'));
+    expect(workflow, contains('path: build/app/outputs/flutter-apk/app-debug.apk'));
   });
 }
