@@ -9,8 +9,12 @@ import 'package:flutter/material.dart';
 import 'domain/map/map_screen_services.dart';
 import 'infrastructure/logging/file_logger.dart';
 import 'infrastructure/logging/file_logger_lifecycle_observer.dart';
+import 'infrastructure/permissions/location_permission_service.dart';
 import 'infrastructure/pmtiles/flutter_pmtiles_asset_copier.dart';
 import 'presentation/screens/map_screen.dart';
+import 'presentation/screens/permission_gate_screen.dart';
+
+typedef PmtilesPathLoader = Future<String> Function();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,20 +24,27 @@ Future<void> main() async {
     developer.log('FileLogger bootstrap failed; continuing without file logging', name: 'app.bootstrap', error: error, stackTrace: stackTrace);
   }
   WidgetsBinding.instance.addObserver(FileLoggerLifecycleObserver());
-  runApp(MirkPocApp(pmtilesPathFuture: ensureFlutterPmtilesAssetCopied()));
+  runApp(MirkPocApp(pmtilesPathLoader: ensureFlutterPmtilesAssetCopied));
 }
 
 class MirkPocApp extends StatelessWidget {
-  const MirkPocApp({required this.pmtilesPathFuture, super.key});
+  MirkPocApp({Future<String>? pmtilesPathFuture, PmtilesPathLoader? pmtilesPathLoader, LocationPermissionService? permissionService, super.key})
+    : assert(pmtilesPathFuture == null || pmtilesPathLoader == null, 'Use either pmtilesPathFuture or pmtilesPathLoader, not both.'),
+      _pmtilesPathLoader = pmtilesPathLoader ?? (() => pmtilesPathFuture ?? ensureFlutterPmtilesAssetCopied()),
+      _permissionService = permissionService ?? LocationPermissionService();
 
-  final Future<String> pmtilesPathFuture;
+  final PmtilesPathLoader _pmtilesPathLoader;
+  final LocationPermissionService _permissionService;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MirkFall POC',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
-      home: PmtilesBootstrapScreen(pmtilesPathFuture: pmtilesPathFuture),
+      home: PermissionGateScreen(
+        permissionService: _permissionService,
+        grantedBuilder: (BuildContext context) => PmtilesBootstrapScreen(pmtilesPathFuture: _pmtilesPathLoader()),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

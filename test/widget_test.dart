@@ -6,13 +6,16 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
+import 'package:mirk_poc_debug/infrastructure/permissions/location_permission_service.dart';
 import 'package:mirk_poc_debug/main.dart';
 import 'package:mirk_poc_debug/infrastructure/pmtiles/pmtiles_asset_copier.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
 
 void main() {
   testWidgets('routes copied PMTiles path into MapScreen on startup success', (WidgetTester tester) async {
-    await tester.pumpWidget(MirkPocApp(pmtilesPathFuture: Future<String>.value('/support/maps/Fra_Melun.pmtile')));
+    await tester.pumpWidget(
+      MirkPocApp(pmtilesPathFuture: Future<String>.value('/support/maps/Fra_Melun.pmtile'), permissionService: _grantedPermissionService()),
+    );
     await tester.pump();
 
     final MapScreen mapScreen = tester.widget<MapScreen>(find.byType(MapScreen));
@@ -21,7 +24,9 @@ void main() {
   });
 
   testWidgets('renders focused PMTiles copy error on startup failure', (WidgetTester tester) async {
-    await tester.pumpWidget(MirkPocApp(pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom'))));
+    await tester.pumpWidget(
+      MirkPocApp(pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom')), permissionService: _grantedPermissionService()),
+    );
     await tester.pump();
 
     expect(find.text('Map data could not open. Restart the app or share the active log for diagnosis.'), findsOneWidget);
@@ -40,4 +45,35 @@ void main() {
     expect(runAppIndex, greaterThan(observerIndex));
     expect(source, contains("developer.log('FileLogger bootstrap failed; continuing without file logging'"));
   });
+
+  testWidgets('starts with foreground permission rationale before map bootstrap', (WidgetTester tester) async {
+    var mapLoaderStarted = false;
+
+    await tester.pumpWidget(
+      MirkPocApp(
+        pmtilesPathLoader: () {
+          mapLoaderStarted = true;
+          return Future<String>.value('/support/maps/Fra_Melun.pmtile');
+        },
+        permissionService: LocationPermissionService(
+          statusReader: () async => LocationPermissionState.denied,
+          requestWhenInUse: () async => LocationPermissionState.denied,
+          openSettings: () async => true,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Enable foreground location'), findsOneWidget);
+    expect(find.text('Enable Location'), findsOneWidget);
+    expect(mapLoaderStarted, isFalse);
+  });
+}
+
+LocationPermissionService _grantedPermissionService() {
+  return LocationPermissionService(
+    statusReader: () async => LocationPermissionState.granted,
+    requestWhenInUse: () async => LocationPermissionState.granted,
+    openSettings: () async => true,
+  );
 }
