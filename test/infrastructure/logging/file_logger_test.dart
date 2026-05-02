@@ -70,4 +70,13 @@ void main() {
   test('locks the log directory cap constant', () {
     expect(kMaxLogsDirBytes, 10 * 1024 * 1024);
   });
+
+  test('lifecycle observer flushes non-resumed app states only', () {
+    final String source = File(p.join('lib', 'infrastructure', 'logging', 'file_logger_lifecycle_observer.dart')).readAsStringSync();
+
+    expect(source, contains('extends WidgetsBindingObserver'));
+    expect(source, contains('if (state == AppLifecycleState.resumed) return;'));
+    expect(source, contains('unawaited(_flushCallback())'));
+    expect(source, contains('app_lifecycle_flush'));
+  });
 }

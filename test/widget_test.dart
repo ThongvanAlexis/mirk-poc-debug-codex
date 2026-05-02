@@ -2,6 +2,8 @@
 // Licensed under the Good Old Software License v1.0
 // See LICENSE file for details
 
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/main.dart';
@@ -22,6 +24,20 @@ void main() {
     await tester.pumpWidget(MirkPocApp(pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom'))));
     await tester.pump();
 
-    expect(find.text('PMTiles copy failed'), findsOneWidget);
+    expect(find.text('Map data could not open. Restart the app or share the active log for diagnosis.'), findsOneWidget);
+  });
+
+  test('main bootstraps the file logger before runApp and registers lifecycle flushing', () {
+    final String source = File('lib/main.dart').readAsStringSync();
+    final int bindingIndex = source.indexOf('WidgetsFlutterBinding.ensureInitialized()');
+    final int bootstrapIndex = source.indexOf('await FileLogger.bootstrap()');
+    final int observerIndex = source.indexOf('WidgetsBinding.instance.addObserver(FileLoggerLifecycleObserver())');
+    final int runAppIndex = source.indexOf('runApp(');
+
+    expect(bindingIndex, greaterThanOrEqualTo(0));
+    expect(bootstrapIndex, greaterThan(bindingIndex));
+    expect(observerIndex, greaterThan(bootstrapIndex));
+    expect(runAppIndex, greaterThan(observerIndex));
+    expect(source, contains("developer.log('FileLogger bootstrap failed; continuing without file logging'"));
   });
 }
