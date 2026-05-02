@@ -26,7 +26,7 @@ void main() {
   test('accepts packages with allowed SPDX licenses', () async {
     _writeRepo(
       tempDir,
-      packages: <_PackageFixture>[_PackageFixture(name: 'allowed', version: '1.0.0', pubspecLicense: 'MIT')],
+      packages: const <_PackageFixture>[_PackageFixture(name: 'allowed', version: '1.0.0', pubspecLicense: 'MIT')],
     );
 
     expect(await check_licenses.runCheck(<String>[tempDir.path]), equals(0));
@@ -35,7 +35,9 @@ void main() {
   test('rejects forbidden license markers in license files', () async {
     _writeRepo(
       tempDir,
-      packages: <_PackageFixture>[_PackageFixture(name: 'forbidden', version: '1.0.0', licenseText: 'GNU GENERAL PUBLIC LICENSE\nVersion 3, 29 June 2007\n')],
+      packages: const <_PackageFixture>[
+        _PackageFixture(name: 'forbidden', version: '1.0.0', licenseText: 'GNU GENERAL PUBLIC LICENSE\nVersion 3, 29 June 2007\n'),
+      ],
     );
 
     expect(await check_licenses.runCheck(<String>[tempDir.path]), equals(1));
@@ -44,7 +46,7 @@ void main() {
   test('rejects denied telemetry, ads, and MapLibre package names', () async {
     _writeRepo(
       tempDir,
-      packages: <_PackageFixture>[_PackageFixture(name: 'maplibre_gl', version: '1.0.0', pubspecLicense: 'BSD-3-Clause')],
+      packages: const <_PackageFixture>[_PackageFixture(name: 'maplibre_gl', version: '1.0.0', pubspecLicense: 'BSD-3-Clause')],
     );
 
     expect(await check_licenses.runCheck(<String>[tempDir.path]), equals(1));
@@ -53,7 +55,7 @@ void main() {
   test('rejects packages whose license cannot be resolved', () async {
     _writeRepo(
       tempDir,
-      packages: <_PackageFixture>[_PackageFixture(name: 'unresolved', version: '1.0.0')],
+      packages: const <_PackageFixture>[_PackageFixture(name: 'unresolved', version: '1.0.0')],
     );
 
     expect(await check_licenses.runCheck(<String>[tempDir.path]), equals(1));

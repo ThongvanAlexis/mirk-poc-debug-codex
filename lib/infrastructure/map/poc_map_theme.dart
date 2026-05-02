@@ -53,14 +53,17 @@ Map<String, Object> createPocMapThemeStyle() {
 }
 
 Map<String, Object> _fillLayer({required String id, required String sourceLayer, required int color, double opacity = 1.0, int? minzoom}) {
-  return <String, Object>{
+  final layer = <String, Object>{
     'id': id,
     'type': 'fill',
     'source': kPocTileProviderSourceKey,
     'source-layer': sourceLayer,
-    if (minzoom != null) 'minzoom': minzoom,
     'paint': <String, Object>{'fill-color': _hexColor(color), 'fill-opacity': opacity},
   };
+  if (minzoom != null) {
+    layer['minzoom'] = minzoom;
+  }
+  return layer;
 }
 
 Map<String, Object> _lineLayer({required String id, required String sourceLayer, required int color, required double width, double opacity = 1.0}) {

@@ -13,7 +13,6 @@ import 'package:mirk_poc_debug/domain/location/geo_fix.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/domain/revealed/reveal_disc.dart';
 import 'package:mirk_poc_debug/domain/revealed/reveal_disc_repository.dart';
-import 'package:mirk_poc_debug/infrastructure/location/foreground_location_service.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 
@@ -48,6 +47,7 @@ void main() {
     expect(repository.snapshot().single.lon, equals(2.6562));
 
     await latestFixes.close();
+    await _disposeMap(tester);
   });
 
   testWidgets('injected initial latest fix is accepted once for testable state', (WidgetTester tester) async {
@@ -73,6 +73,8 @@ void main() {
     expect(repository.snapshot(), hasLength(1));
     expect(repository.snapshot().single.lat, equals(48.541));
     expect(repository.snapshot().single.lon, equals(2.657));
+
+    await _disposeMap(tester);
   });
 
   test('presentation map and fog code do not import location or permission plugins', () {
@@ -106,4 +108,9 @@ class _RecordingVectorTileProvider extends VectorTileProvider {
 
   @override
   Future<Uint8List> provide(TileIdentity tile) => _tileCompleter.future;
+}
+
+Future<void> _disposeMap(WidgetTester tester) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump(const Duration(seconds: 3));
 }

@@ -23,7 +23,9 @@ void main() {
     );
 
     expect(find.byTooltip('Share active log'), findsOneWidget);
-    final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
+    final SizedBox sizedBox = tester.widget<SizedBox>(
+      find.descendant(of: find.byType(ShareLogButton), matching: find.byWidgetPredicate((Widget widget) => widget is SizedBox && widget.width == 44)),
+    );
     expect(sizedBox.width, 44);
     expect(sizedBox.height, 44);
 

@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('stores immutable south west north east bounds', () {
-    final bbox = MirkViewportBbox(south: 48.48, west: 2.55, north: 48.60, east: 2.78);
+    const bbox = MirkViewportBbox(south: 48.48, west: 2.55, north: 48.60, east: 2.78);
 
     expect(bbox.south, equals(48.48));
     expect(bbox.west, equals(2.55));
@@ -18,7 +18,7 @@ void main() {
   });
 
   test('supports antimeridian viewport wrap with explicit span semantics', () {
-    final bbox = MirkViewportBbox(south: -1.0, west: 170.0, north: 1.0, east: -170.0);
+    const bbox = MirkViewportBbox(south: -1.0, west: 170.0, north: 1.0, east: -170.0);
 
     expect(bbox.crossesAntimeridian, isTrue);
     expect(bbox.longitudeSpanDegrees, equals(20.0));
@@ -27,8 +27,8 @@ void main() {
   });
 
   test('implements value equality', () {
-    final a = MirkViewportBbox(south: 1.0, west: 2.0, north: 3.0, east: 4.0);
-    final b = MirkViewportBbox(south: 1.0, west: 2.0, north: 3.0, east: 4.0);
+    const a = MirkViewportBbox(south: 1.0, west: 2.0, north: 3.0, east: 4.0);
+    const b = MirkViewportBbox(south: 1.0, west: 2.0, north: 3.0, east: 4.0);
 
     expect(a, equals(b));
     expect(a.hashCode, equals(b.hashCode));
@@ -36,8 +36,12 @@ void main() {
   });
 
   test('asserts ordered latitude and valid antimeridian shape', () {
-    expect(() => MirkViewportBbox(south: 2.0, west: 0.0, north: 1.0, east: 1.0), throwsA(isA<AssertionError>()));
-    expect(() => MirkViewportBbox(south: -1.0, west: -170.0, north: 1.0, east: 170.0), returnsNormally);
-    expect(() => MirkViewportBbox(south: -1.0, west: -170.0, north: 1.0, east: -175.0), throwsA(isA<AssertionError>()));
+    MirkViewportBbox bbox({required double south, required double west, required double north, required double east}) {
+      return MirkViewportBbox(south: south, west: west, north: north, east: east);
+    }
+
+    expect(() => bbox(south: 2.0, west: 0.0, north: 1.0, east: 1.0), throwsA(isA<AssertionError>()));
+    expect(() => bbox(south: -1.0, west: -170.0, north: 1.0, east: 170.0), returnsNormally);
+    expect(() => bbox(south: -1.0, west: -170.0, north: 1.0, east: -175.0), throwsA(isA<AssertionError>()));
   });
 }

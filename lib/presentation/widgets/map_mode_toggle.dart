@@ -21,11 +21,11 @@ class MapModeToggle extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: SegmentedButton<MapDisplayMode>(
         showSelectedIcon: false,
-        style: ButtonStyle(
+        style: const ButtonStyle(
           visualDensity: VisualDensity.compact,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          minimumSize: const WidgetStatePropertyAll<Size>(Size(62, 36)),
-          padding: const WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 8)),
+          minimumSize: WidgetStatePropertyAll<Size>(Size(62, 36)),
+          padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 8)),
         ),
         segments: const <ButtonSegment<MapDisplayMode>>[
           ButtonSegment<MapDisplayMode>(value: MapDisplayMode.mapOnly, icon: Icon(Icons.map_outlined, size: 18), label: Text('Map')),

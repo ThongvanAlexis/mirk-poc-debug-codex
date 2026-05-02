@@ -258,11 +258,11 @@ class _MapScreenState extends State<MapScreen> {
 @visibleForTesting
 MapOptions createPocMapOptions({MapEventCallback? onMapEvent}) {
   return MapOptions(
-    initialCenter: LatLng(kPocInitialLatitude, kPocInitialLongitude),
+    initialCenter: const LatLng(kPocInitialLatitude, kPocInitialLongitude),
     initialZoom: kPocInitialZoom,
     minZoom: kPocMinZoom,
     maxZoom: kPocMaxZoom,
-    backgroundColor: Color(kMirkFogAtmosphericShadowColorArgb),
+    backgroundColor: const Color(kMirkFogAtmosphericShadowColorArgb),
     onMapEvent: onMapEvent,
   );
 }

@@ -2,6 +2,7 @@
 // Licensed under the Good Old Software License v1.0
 // See LICENSE file for details
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
@@ -18,7 +19,8 @@ void main() {
   });
 
   test('atmospheric fog shader asset contains scalar SDF rect uniforms', () async {
-    final String shader = await rootBundle.loadString(kPocFogShaderAssetPath);
+    final data = await rootBundle.load(kPocFogShaderAssetPath);
+    final String shader = utf8.decode(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), allowMalformed: true);
 
     expect(shader, contains('uSdfRectOriginX'));
     expect(shader, contains('uSdfRectOriginY'));

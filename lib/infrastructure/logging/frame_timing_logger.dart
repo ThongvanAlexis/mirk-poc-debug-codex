@@ -2,8 +2,6 @@
 // Licensed under the Good Old Software License v1.0
 // See LICENSE file for details
 
-import 'dart:ui' show FrameTiming, TimingsCallback;
-
 import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
 

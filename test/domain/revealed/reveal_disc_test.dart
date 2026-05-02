@@ -19,15 +19,15 @@ void main() {
   });
 
   test('intersects viewport bbox conservatively in metre space', () {
-    final melunViewport = MirkViewportBbox(south: 48.53, west: 2.64, north: 48.55, east: 2.67);
-    final outsideViewport = MirkViewportBbox(south: 48.56, west: 2.70, north: 48.58, east: 2.73);
+    const melunViewport = MirkViewportBbox(south: 48.53, west: 2.64, north: 48.55, east: 2.67);
+    const outsideViewport = MirkViewportBbox(south: 48.56, west: 2.70, north: 48.58, east: 2.73);
 
     expect(disc().intersectsBbox(melunViewport), isTrue);
     expect(disc().intersectsBbox(outsideViewport), isFalse);
   });
 
   test('preserves parent antimeridian bbox intersection semantics', () {
-    final antimeridianViewport = MirkViewportBbox(south: -1.0, west: 170.0, north: 1.0, east: -170.0);
+    const antimeridianViewport = MirkViewportBbox(south: -1.0, west: 170.0, north: 1.0, east: -170.0);
 
     expect(disc(lat: 0.0, lon: 179.9, radiusMeters: 1000.0).intersectsBbox(antimeridianViewport), isTrue);
     expect(disc(lat: 0.0, lon: -179.9, radiusMeters: 1000.0).intersectsBbox(antimeridianViewport), isTrue);

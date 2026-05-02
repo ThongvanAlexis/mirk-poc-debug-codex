@@ -44,6 +44,8 @@ void main() {
     expect(map.options.initialZoom, kPocInitialZoom);
     expect(map.options.minZoom, kPocMinZoom);
     expect(map.options.maxZoom, kPocMaxZoom);
+
+    await _disposeMap(tester);
   });
 
   testWidgets('wires VectorTileLayer to the protomaps source key and raster mode', (WidgetTester tester) async {
@@ -62,6 +64,8 @@ void main() {
     expect(layer.tileProviders.tileProviderBySource, containsPair(kPocTileProviderSourceKey, provider));
     expect(layer.layerMode, VectorTileLayerMode.raster);
     expect(layer.maximumZoom, kPocMaxZoom);
+
+    await _disposeMap(tester);
   });
 
   testWidgets('disposes the opened provider through the lifecycle seam', (WidgetTester tester) async {
@@ -81,6 +85,7 @@ void main() {
     );
     await tester.pump();
     await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 3));
 
     expect(disposedProviders, <VectorTileProvider>[provider]);
   });
@@ -108,6 +113,8 @@ void main() {
     expect(button.selected, <MapDisplayMode>{MapDisplayMode.mapWithFog});
     expect(find.byType(MapModeToggle), findsOneWidget);
     expect(find.byType(VectorTileLayer), findsOneWidget);
+
+    await _disposeMap(tester);
   });
 
   testWidgets('places the share-log control in the map runtime', (WidgetTester tester) async {
@@ -134,6 +141,8 @@ void main() {
     await tester.tap(find.byIcon(Icons.ios_share));
     await tester.pump();
     expect(shareCount, 1);
+
+    await _disposeMap(tester);
   });
 
   testWidgets('rejects remote PMTiles sources before provider construction', (WidgetTester tester) async {
@@ -181,4 +190,9 @@ class _RecordingVectorTileProvider extends VectorTileProvider {
 
   @override
   Future<Uint8List> provide(TileIdentity tile) => _tileCompleter.future;
+}
+
+Future<void> _disposeMap(WidgetTester tester) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump(const Duration(seconds: 3));
 }

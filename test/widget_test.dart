@@ -26,6 +26,7 @@ void main() {
       ),
     );
     await tester.pump();
+    await tester.pump();
 
     final MapScreen mapScreen = tester.widget<MapScreen>(find.byType(MapScreen));
     expect(mapScreen.services.pmtilesPath, '/support/maps/Fra_Melun.pmtile');
@@ -44,7 +45,7 @@ void main() {
 
     await tester.pumpWidget(
       MirkPocApp(
-        pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom')),
+        pmtilesPathLoader: () async => throw const PmtilesAssetCopyException('boom'),
         permissionService: _grantedPermissionService(),
         locationService: _quietLocationService(),
         shareLogService: ActiveLogShareService(
@@ -56,6 +57,7 @@ void main() {
         ),
       ),
     );
+    await tester.pump();
     await tester.pump();
 
     expect(find.text('Map data could not open. Restart the app or share the active log for diagnosis.'), findsOneWidget);

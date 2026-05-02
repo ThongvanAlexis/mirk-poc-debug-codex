@@ -196,7 +196,6 @@ MirkViewportBbox viewportFromCamera(MapCamera camera) {
   return MirkViewportBbox(south: bounds.south, west: bounds.west, north: bounds.north, east: bounds.east);
 }
 
-@visibleForTesting
 SdfCache<ui.Image> createFogSdfCache() {
   const builder = RevealedSdfBuilder();
   return SdfCache<ui.Image>(
