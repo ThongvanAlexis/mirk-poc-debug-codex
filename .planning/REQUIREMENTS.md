@@ -24,7 +24,7 @@
 
 ### Fog Rendering
 
-- [ ] **FOG-01**: App includes `assets/shaders/atmospheric_fog.frag` copied from MirkFall without visual simplification.
+- [x] **FOG-01**: App includes `assets/shaders/atmospheric_fog.frag` copied from MirkFall without visual simplification.
 - [ ] **FOG-02**: App ports or minimally adapts MirkFall reveal disc, viewport bbox, SDF builder, projection, clip path, shader uniform, animation helper, and relevant fog constants.
 - [ ] **FOG-03**: App renders the fog as a `flutter_map` custom Flutter layer in the same map child stack as the vector tiles.
 - [ ] **FOG-04**: Fog layer builds a 256x256 SDF image from reveal discs using metre-space distance.
@@ -112,7 +112,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAP-04 | Phase 2 | Pending |
 | MAP-05 | Phase 2 | Pending |
 | MAP-06 | Phase 2 | Pending |
-| FOG-01 | Phase 2 | Pending |
+| FOG-01 | Phase 2 | Complete |
 | FOG-02 | Phase 2 | Pending |
 | FOG-03 | Phase 2 | Pending |
 | FOG-04 | Phase 2 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after Phase 1 execution*
+*Last updated: 2026-05-02 after Plan 02-01 execution*

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: Phase 2 - Same-Pipeline Map And Fog
-status: ready_to_execute
-last_updated: "2026-05-02T09:12:00.254Z"
+status: executing
+last_updated: "2026-05-02T09:44:00.000Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 7
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -17,7 +17,7 @@ progress:
 **Project:** MirkFall Flutter Map Fog POC
 **Initialized:** 2026-05-02
 **Current phase:** Phase 2 - Same-Pipeline Map And Fog
-**Status:** Ready to execute
+**Status:** Executing
 
 ## Project Reference
 
@@ -31,7 +31,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-02)
 | Phase | Status | Plans | Progress |
 |-------|--------|-------|----------|
 | 1 | Completed | 3/3 | 100% |
-| 2 | Ready to execute | 0/4 | 0% |
+| 2 | Executing | 1/4 | 25% |
 | 3 | Pending | 0/0 | 0% |
 | 4 | Pending | 0/0 | 0% |
 
@@ -48,11 +48,12 @@ See: `.planning/PROJECT.md` (updated 2026-05-02)
 
 - Phase 2 planning created four plans under `.planning/phases/02-same-pipeline-map-and-fog/`.
 - Planning resolved a package constraint conflict by pinning the stable PMTiles-compatible chain: `flutter_map 7.0.2`, `vector_map_tiles 8.0.0`, and `vector_map_tiles_pmtiles 1.5.0`.
+- Plan 02-01 completed the exact dependency graph, copied atmospheric shader asset, dependency audit update, and renderer-critical constants/tests.
 - Phase 2 intentionally leaves permission rationale, durable synchronous file logging, and APK/IPA artifact jobs to Phase 3.
 
 ## Next Command
 
-Run `$gsd-execute-phase 2` to build the same-pipeline map and fog renderer proof.
+Continue Phase 2 with Plan 02-02 offline map rendering and Plan 02-03 fog infrastructure.
 
 ---
-*Last updated: 2026-05-02 after Phase 2 planning*
+*Last updated: 2026-05-02 after Plan 02-01 execution*
