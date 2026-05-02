@@ -18,8 +18,10 @@ import '../../domain/map/map_screen_services.dart';
 import '../../domain/revealed/reveal_disc_repository.dart';
 import '../../infrastructure/map/poc_map_theme.dart';
 import '../../infrastructure/mirk/sdf/sdf_cache.dart';
+import '../widgets/blue_dot_marker.dart';
 import '../widgets/fog_layer.dart';
 import '../widgets/map_mode_toggle.dart';
+import '../widgets/recenter_fab.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({required this.services, super.key});
@@ -120,6 +122,13 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
+              Positioned(
+                right: 12,
+                bottom: 12,
+                child: SafeArea(
+                  child: RecenterFab(latestFix: _latestFix, onRecenter: _recenterToLatestFix),
+                ),
+              ),
             ],
           );
         },
@@ -175,6 +184,12 @@ class _MapScreenState extends State<MapScreen> {
       _latestFix = fix;
     });
   }
+
+  void _recenterToLatestFix() {
+    final fix = _latestFix;
+    if (fix == null) return;
+    _mapController.move(fix.latLng, kPocRecenterZoom);
+  }
 }
 
 @visibleForTesting
@@ -209,13 +224,7 @@ List<Widget> createPocMapChildren({
     children.add(FogLayer(discRepository: revealDiscRepository, shader: fogShader, sdfCache: sdfCache));
   }
   if (latestFix != null) {
-    children.add(
-      CircleLayer<Object>(
-        circles: <CircleMarker<Object>>[
-          CircleMarker<Object>(point: latestFix.latLng, radius: 7.0, color: Colors.blue, borderStrokeWidth: 2.0, borderColor: Colors.white),
-        ],
-      ),
-    );
+    children.add(CircleLayer<Object>(circles: <CircleMarker<Object>>[BlueDotMarker.build(point: latestFix.latLng)]));
   }
   return children;
 }
