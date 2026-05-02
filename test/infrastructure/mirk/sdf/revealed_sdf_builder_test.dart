@@ -56,8 +56,8 @@ void main() {
     final eastLon = reveal.lon + reveal.radiusMeters / (kMetersPerDegreeLat * math.cos(meanLatRad));
     final northPx = MirkProjection.latLonToScreen(lat: northLat, lon: reveal.lon, viewport: viewport, size: const ui.Size(256, 256));
     final eastPx = MirkProjection.latLonToScreen(lat: reveal.lat, lon: eastLon, viewport: viewport, size: const ui.Size(256, 256));
-    final northByte = _redAt(bytes, northPx.dx.round().clamp(0, 255), northPx.dy.round().clamp(0, 255));
-    final eastByte = _redAt(bytes, eastPx.dx.round().clamp(0, 255), eastPx.dy.round().clamp(0, 255));
+    final northByte = _redAt(bytes, _clampedPixel(northPx.dx), _clampedPixel(northPx.dy));
+    final eastByte = _redAt(bytes, _clampedPixel(eastPx.dx), _clampedPixel(eastPx.dy));
 
     expect(northByte, closeTo(eastByte, 20));
     expect(northByte, closeTo(128, 30));
@@ -74,4 +74,11 @@ void main() {
 
 int _redAt(Uint8List bytes, int x, int y) {
   return bytes[(y * kMirkFogSdfResolution + x) * 4];
+}
+
+int _clampedPixel(double value) {
+  final rounded = value.round();
+  if (rounded < 0) return 0;
+  if (rounded >= kMirkFogSdfResolution) return kMirkFogSdfResolution - 1;
+  return rounded;
 }
