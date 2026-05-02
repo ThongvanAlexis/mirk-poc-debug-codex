@@ -39,11 +39,11 @@
 
 Plans:
 - **Wave 1**
-  - [ ] `01-01-PLAN.md` - Create the mobile Flutter scaffold, locked app identity, strict analyzer baseline, GOSL license, and platform metadata tests.
+  - [x] `01-01-PLAN.md` - Create the mobile Flutter scaffold, locked app identity, strict analyzer baseline, GOSL license, and platform metadata tests.
 - **Wave 2** *(blocked on Wave 1 completion)*
-  - [ ] `01-02-PLAN.md` - Bundle `Fra_Melun.pmtile`, implement checksum-validating copy-to-app-support, and wire a focused launch proof.
+  - [x] `01-02-PLAN.md` - Bundle `Fra_Melun.pmtile`, implement checksum-validating copy-to-app-support, and wire a focused launch proof.
 - **Wave 3** *(blocked on Waves 1-2 completion)*
-  - [ ] `01-03-PLAN.md` - Add header/license/dependency guard scripts, `DEPENDENCIES.md`, and the CI-01 gates workflow.
+  - [x] `01-03-PLAN.md` - Add header/license/dependency guard scripts, `DEPENDENCIES.md`, and the CI-01 gates workflow.
 
 Cross-cutting constraints:
 - All direct dependencies must be exact pins with a committed `pubspec.lock`.

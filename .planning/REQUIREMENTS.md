@@ -7,16 +7,16 @@
 
 ### Project Foundation
 
-- [ ] **FOUND-01**: Developer can run a Flutter app scaffold whose package, bundle ID, iOS display/internal names, and committed platform files are compatible with SideStore sideloading.
-- [ ] **FOUND-02**: Developer can run `dart format --line-length 160 --set-exit-if-changed .` without diffs.
-- [ ] **FOUND-03**: Developer can run `flutter analyze --fatal-infos --fatal-warnings` with strict Dart settings enabled.
-- [ ] **FOUND-04**: Every committed `.dart` file starts with the required GOSL copyright/license header.
-- [ ] **FOUND-05**: CI rejects disallowed dependency licenses, including GPL, AGPL, LGPL, SSPL, and unknown licenses unless explicitly allowlisted.
+- [x] **FOUND-01**: Developer can run a Flutter app scaffold whose package, bundle ID, iOS display/internal names, and committed platform files are compatible with SideStore sideloading.
+- [x] **FOUND-02**: Developer can run `dart format --line-length 160 --set-exit-if-changed .` without diffs.
+- [x] **FOUND-03**: Developer can run `flutter analyze --fatal-infos --fatal-warnings` with strict Dart settings enabled.
+- [x] **FOUND-04**: Every committed `.dart` file starts with the required GOSL copyright/license header.
+- [x] **FOUND-05**: CI rejects disallowed dependency licenses, including GPL, AGPL, LGPL, SSPL, and unknown licenses unless explicitly allowlisted.
 
 ### Map Data And Rendering
 
-- [ ] **MAP-01**: App bundles `Fra_Melun.pmtile` under app assets and includes it in `pubspec.yaml`.
-- [ ] **MAP-02**: App copies the bundled PMTiles file to an app support filesystem path on first launch.
+- [x] **MAP-01**: App bundles `Fra_Melun.pmtile` under app assets and includes it in `pubspec.yaml`.
+- [x] **MAP-02**: App copies the bundled PMTiles file to an app support filesystem path on first launch.
 - [ ] **MAP-03**: App loads Melun vector tiles through `vector_map_tiles_pmtiles` from the copied filesystem path.
 - [ ] **MAP-04**: User sees a `flutter_map` map centered on Melun at latitude `48.5397`, longitude `2.6553`, zoom `13`.
 - [ ] **MAP-05**: Map styling approximates MirkFall's neutral basemap colors for background, landcover, water, boundaries, and roads.
@@ -51,7 +51,7 @@
 
 ### iOS And Android Build Artifacts
 
-- [ ] **CI-01**: GitHub Actions lint job runs `flutter pub get`, format check with line length 160, analyze with fatal infos/warnings, dependency/license/header checks, and tests.
+- [x] **CI-01**: GitHub Actions lint job runs `flutter pub get`, format check with line length 160, analyze with fatal infos/warnings, dependency/license/header checks, and tests.
 - [ ] **CI-02**: GitHub Actions Android job builds `flutter build apk --debug` and uploads a downloadable APK artifact.
 - [ ] **CI-03**: GitHub Actions iOS job runs on macOS, builds `flutter build ios --no-codesign`, packages `Payload/Runner.app` into an unsigned `.ipa`, and uploads it.
 - [ ] **CI-04**: iOS platform files include a Podfile with the location permission macro required by `permission_handler`.
@@ -101,13 +101,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
-| FOUND-05 | Phase 1 | Pending |
-| MAP-01 | Phase 1 | Pending |
-| MAP-02 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
+| FOUND-05 | Phase 1 | Complete |
+| MAP-01 | Phase 1 | Complete |
+| MAP-02 | Phase 1 | Complete |
 | MAP-03 | Phase 2 | Pending |
 | MAP-04 | Phase 2 | Pending |
 | MAP-05 | Phase 2 | Pending |
@@ -130,7 +130,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOG-03 | Phase 3 | Pending |
 | LOG-04 | Phase 3 | Pending |
 | LOG-05 | Phase 3 | Pending |
-| CI-01 | Phase 1 | Pending |
+| CI-01 | Phase 1 | Complete |
 | CI-02 | Phase 3 | Pending |
 | CI-03 | Phase 3 | Pending |
 | CI-04 | Phase 3 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after initial definition*
+*Last updated: 2026-05-02 after Phase 1 execution*
