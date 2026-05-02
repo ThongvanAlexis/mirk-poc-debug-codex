@@ -16,6 +16,7 @@ import 'infrastructure/pmtiles/flutter_pmtiles_asset_copier.dart';
 import 'infrastructure/sharing/active_log_share_service.dart';
 import 'presentation/screens/map_screen.dart';
 import 'presentation/screens/permission_gate_screen.dart';
+import 'presentation/widgets/share_log_button.dart';
 
 typedef PmtilesPathLoader = Future<String> Function();
 
@@ -131,7 +132,13 @@ class PmtilesBootstrapScreen extends StatelessWidget {
               return const Text('Preparing Melun map');
             }
             if (snapshot.hasError) {
-              return const Text('Map data could not open. Restart the app or share the active log for diagnosis.');
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text('Map data could not open. Restart the app or share the active log for diagnosis.'),
+                  if (shareActiveLog != null) ...<Widget>[const SizedBox(height: 16), ShareLogButton(onShareLog: shareActiveLog)],
+                ],
+              );
             }
             return MapScreen(
               services: MapScreenServices(pmtilesPath: snapshot.requireData, latestFixStream: latestFixStream, shareActiveLog: shareActiveLog),

@@ -11,8 +11,10 @@ import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/infrastructure/location/foreground_location_service.dart';
 import 'package:mirk_poc_debug/infrastructure/permissions/location_permission_service.dart';
 import 'package:mirk_poc_debug/infrastructure/pmtiles/pmtiles_asset_copier.dart';
+import 'package:mirk_poc_debug/infrastructure/sharing/active_log_share_service.dart';
 import 'package:mirk_poc_debug/main.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 void main() {
   testWidgets('routes copied PMTiles path into MapScreen on startup success', (WidgetTester tester) async {
@@ -31,16 +33,37 @@ void main() {
   });
 
   testWidgets('renders focused PMTiles copy error on startup failure', (WidgetTester tester) async {
+    final Directory tempDir = Directory.systemTemp.createTempSync('mirk_widget_share_log_');
+    addTearDown(() {
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+    final File logFile = File('${tempDir.path}/active_log.jsonl')..writeAsStringSync('log');
+    var shareCount = 0;
+
     await tester.pumpWidget(
       MirkPocApp(
         pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom')),
         permissionService: _grantedPermissionService(),
         locationService: _quietLocationService(),
+        shareLogService: ActiveLogShareService(
+          activeLogPathProvider: () => logFile.path,
+          share: (ShareParams params) async {
+            shareCount++;
+            return const ShareResult('test', ShareResultStatus.success);
+          },
+        ),
       ),
     );
     await tester.pump();
 
     expect(find.text('Map data could not open. Restart the app or share the active log for diagnosis.'), findsOneWidget);
+    expect(find.byTooltip('Share active log'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Share active log'));
+    await tester.pump();
+    expect(shareCount, 1);
   });
 
   test('main bootstraps the file logger before runApp and registers lifecycle flushing', () {
