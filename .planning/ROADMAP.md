@@ -70,6 +70,24 @@ Cross-cutting constraints:
 - Keep `uSdfRect*` identity for the first implementation. Adding compensation math would weaken the same-pipeline test.
 - Logging can be simple in this phase; Phase 3 makes it durable and shareable.
 
+**Plans:** 4 plans in 4 waves
+
+Plans:
+- **Wave 1**
+  - [ ] `02-01-PLAN.md` - Add the resolver-coherent map/fog dependency graph, copy the atmospheric shader, and lock Phase 2 constants/audit data.
+- **Wave 2** *(blocked on Wave 1 completion)*
+  - [ ] `02-02-PLAN.md` - Render the copied Melun PMTiles file through `FlutterMap`/`VectorTileLayer`, add neutral styling, and expose map-only mode.
+- **Wave 3** *(blocked on Wave 1 completion)*
+  - [ ] `02-03-PLAN.md` - Port MirkFall reveal-disc, SDF, projection, clip-path, shader-uniform, animation, and SDF-cache infrastructure with tests.
+- **Wave 4** *(blocked on Waves 2-3 completion)*
+  - [ ] `02-04-PLAN.md` - Mount `FogLayer` inside the same `FlutterMap` child stack, wire seeded/latest-fix reveal discs, blue dot, recenter, and final integration tests.
+
+Cross-cutting constraints:
+- Use the stable resolver-coherent PMTiles chain: `flutter_map 7.0.2`, `vector_map_tiles 8.0.0`, `vector_map_tiles_pmtiles 1.5.0`.
+- Fog must stay inside `FlutterMap.children`; no MapLibre, Mapbox, sibling overlay compensation, or dynamic SDF rect compensation.
+- Keep map-only mode available so vector tile performance can be isolated from fog shader cost.
+- Every Dart file added by Phase 2 must start with the required GOSL header and pass strict analysis.
+
 ## Phase 3: Mobile Runtime And Artifacts
 
 **Goal:** Make the POC installable and diagnosable on the user's real devices, especially iOS via SideStore.
