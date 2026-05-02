@@ -12,7 +12,7 @@ Produce a defensible yes/no answer: does the fog stay visually locked to the map
 
 ## Current State
 
-Phase 2 is complete at the code-verification level: the app opens the copied Melun PMTiles path through `flutter_map`/`vector_map_tiles`, mounts the atmospheric fog as a same-stack `FlutterMap` child, uses the parent-derived SDF/projection/uniform pipeline, and exposes map-only, latest-fix blue dot, reveal-disc, and recenter surfaces. Real iOS visual sync and fps evidence remains Phase 4 UAT.
+Phase 3 is complete at the code-verification level: the app has a foreground permission gate, foreground GPS into the `GeoFix` reveal seam, synchronous JSONL file logging, active-log sharing, foreground-only platform metadata, and CI jobs for Android debug APK plus unsigned iOS IPA artifacts. Real iOS install, visual sync, fps, and decision evidence remain Phase 4 UAT.
 
 ## Requirements
 
@@ -22,12 +22,13 @@ Phase 2 is complete at the code-verification level: the app opens the copied Mel
 - [x] Render Melun vector tiles from the bundled `C:\claude_checkouts\countries-pmtiles\Fra_Melun.pmtile` file. Validated in Phase 2: the app opens the Phase 1 copied filesystem path through `vector_map_tiles_pmtiles`.
 - [x] Render the atmospheric fog shader as a `flutter_map` custom Flutter layer in the same frame pipeline as the map. Validated in Phase 2: `FogLayer` is mounted inside `FlutterMap.children` after `VectorTileLayer`.
 - [x] Reuse the battle-tested MirkFall fog/SDF/projection code rather than reimplementing it from scratch. Validated in Phase 2: reveal discs, viewport bbox, 256x256 metre-space SDF, projection, clip path, 41-slot uniforms, triangle-wave animation, and constants are ported/adapted with tests.
+- [x] Request foreground location permission and feed live GPS fixes into the Phase 2 in-memory 25 m reveal-disc pipeline. Validated in Phase 3: permission-gated startup starts `ForegroundLocationService`, adapts `Position` to `GeoFix`, and feeds `MapScreenServices.latestFixStream`.
+- [x] Write durable local diagnostics and let the user share the active log. Validated in Phase 3: `FileLogger` bootstraps before `runApp()`, writes JSONL synchronously with `RandomAccessFile.writeStringSync` plus `flushSync`, prunes logs, and `ActiveLogShareService` uses the SharePlus file API.
+- [x] Build downloadable unsigned iOS IPA and Android debug APK artifacts in GitHub Actions. Validated in Phase 3: CI adds gates-dependent `ios-unsigned-ipa` and `android-debug-apk` jobs with static workflow guards.
 
 ### Active
 
-- [ ] Request foreground location permission and feed live GPS fixes into the Phase 2 in-memory 25 m reveal-disc pipeline.
 - [ ] Measure fog-map sync, gesture fps, static fps, SDF rebuild latency, map quality, and memory on iOS first.
-- [ ] Build downloadable unsigned iOS IPA and Android debug APK artifacts in GitHub Actions.
 
 ### Out of Scope
 
@@ -99,7 +100,7 @@ Research findings to carry into implementation:
 | Copy PMTiles asset to app support before opening | `vector_map_tiles_pmtiles` supports local filesystem paths, not Flutter bundled assets directly. | Validated in Phase 1 copy service and Phase 2 provider wiring. |
 | Keep foreground-only GPS | The renderer question does not require background tracking and foreground permission avoids unnecessary iOS complexity. | Phase 2 added injected latest-fix/reveal seams; Phase 3 owns permission/runtime flow. |
 | Reuse MirkFall fog/SDF code | The shader, SDF, uniforms, and reveal geometry are battle-tested; reinventing them would weaken the POC evidence. | Validated in Phase 2 with copied shader parity and focused fog infrastructure tests. |
-| Generate CI artifacts for iOS and Android | The user has no Mac, and real acceptance depends on sideloadable iOS UAT. | Pending |
+| Generate CI artifacts for iOS and Android | The user has no Mac, and real acceptance depends on sideloadable iOS UAT. | Implemented in Phase 3 with gates-dependent Android debug APK and unsigned iOS IPA workflow jobs; remote run pending next push. |
 
 ## Evolution
 
@@ -119,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-02 after Phase 2 verification*
+*Last updated: 2026-05-02 after Phase 3 verification*
