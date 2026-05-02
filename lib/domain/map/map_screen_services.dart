@@ -12,6 +12,7 @@ import '../revealed/reveal_disc_repository.dart';
 typedef MapTileProviderFactory = Future<VectorTileProvider> Function(String pmtilesPath);
 typedef MapTileProviderDisposer = void Function(VectorTileProvider provider);
 typedef FogProgramLoader = Future<ui.FragmentProgram> Function();
+typedef ShareActiveLogCallback = Future<void> Function();
 
 enum MapDisplayMode { mapOnly, mapWithFog }
 
@@ -25,6 +26,7 @@ class MapScreenServices {
     this.tileProviderFactory,
     this.tileProviderDisposer,
     this.fogProgramLoader,
+    this.shareActiveLog,
   });
 
   final String pmtilesPath;
@@ -35,6 +37,7 @@ class MapScreenServices {
   final MapTileProviderFactory? tileProviderFactory;
   final MapTileProviderDisposer? tileProviderDisposer;
   final FogProgramLoader? fogProgramLoader;
+  final ShareActiveLogCallback? shareActiveLog;
 
   bool get initiallyShowsFog => initialDisplayMode == MapDisplayMode.mapWithFog;
 

@@ -13,6 +13,7 @@ import 'package:mirk_poc_debug/config/constants.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
 import 'package:mirk_poc_debug/presentation/widgets/map_mode_toggle.dart';
+import 'package:mirk_poc_debug/presentation/widgets/share_log_button.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 
 void main() {
@@ -107,6 +108,32 @@ void main() {
     expect(button.selected, <MapDisplayMode>{MapDisplayMode.mapWithFog});
     expect(find.byType(MapModeToggle), findsOneWidget);
     expect(find.byType(VectorTileLayer), findsOneWidget);
+  });
+
+  testWidgets('places the share-log control in the map runtime', (WidgetTester tester) async {
+    final _RecordingVectorTileProvider provider = _RecordingVectorTileProvider();
+    var shareCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MapScreen(
+          services: MapScreenServices(
+            pmtilesPath: '/support/maps/Fra_Melun.pmtile',
+            tileProviderFactory: (String pmtilesPath) async => provider,
+            shareActiveLog: () async {
+              shareCount++;
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(ShareLogButton), findsOneWidget);
+    expect(find.byTooltip('Share active log'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.ios_share));
+    await tester.pump();
+    expect(shareCount, 1);
   });
 
   testWidgets('rejects remote PMTiles sources before provider construction', (WidgetTester tester) async {

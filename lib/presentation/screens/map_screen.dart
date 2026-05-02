@@ -25,6 +25,7 @@ import '../widgets/blue_dot_marker.dart';
 import '../widgets/fog_layer.dart';
 import '../widgets/map_mode_toggle.dart';
 import '../widgets/recenter_fab.dart';
+import '../widgets/share_log_button.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({required this.services, super.key});
@@ -133,6 +134,11 @@ class _MapScreenState extends State<MapScreen> {
                     },
                   ),
                 ),
+              ),
+              Positioned(
+                left: 12,
+                bottom: 12,
+                child: SafeArea(child: ShareLogButton(onShareLog: widget.services.shareActiveLog)),
               ),
               Positioned(
                 right: 12,

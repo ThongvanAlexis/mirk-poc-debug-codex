@@ -13,6 +13,7 @@ import 'infrastructure/logging/file_logger.dart';
 import 'infrastructure/logging/file_logger_lifecycle_observer.dart';
 import 'infrastructure/permissions/location_permission_service.dart';
 import 'infrastructure/pmtiles/flutter_pmtiles_asset_copier.dart';
+import 'infrastructure/sharing/active_log_share_service.dart';
 import 'presentation/screens/map_screen.dart';
 import 'presentation/screens/permission_gate_screen.dart';
 
@@ -35,15 +36,18 @@ class MirkPocApp extends StatelessWidget {
     PmtilesPathLoader? pmtilesPathLoader,
     LocationPermissionService? permissionService,
     ForegroundLocationService? locationService,
+    ActiveLogShareService? shareLogService,
     super.key,
   }) : assert(pmtilesPathFuture == null || pmtilesPathLoader == null, 'Use either pmtilesPathFuture or pmtilesPathLoader, not both.'),
        _pmtilesPathLoader = pmtilesPathLoader ?? (() => pmtilesPathFuture ?? ensureFlutterPmtilesAssetCopied()),
        _permissionService = permissionService ?? LocationPermissionService(),
-       _locationService = locationService ?? ForegroundLocationService();
+       _locationService = locationService ?? ForegroundLocationService(),
+       _shareLogService = shareLogService ?? ActiveLogShareService();
 
   final PmtilesPathLoader _pmtilesPathLoader;
   final LocationPermissionService _permissionService;
   final ForegroundLocationService _locationService;
+  final ActiveLogShareService _shareLogService;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +56,8 @@ class MirkPocApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
       home: PermissionGateScreen(
         permissionService: _permissionService,
-        grantedBuilder: (BuildContext context) => MirkRuntimeScreen(pmtilesPathLoader: _pmtilesPathLoader, locationService: _locationService),
+        grantedBuilder: (BuildContext context) =>
+            MirkRuntimeScreen(pmtilesPathLoader: _pmtilesPathLoader, locationService: _locationService, shareLogService: _shareLogService),
       ),
       debugShowCheckedModeBanner: false,
     );
@@ -60,10 +65,11 @@ class MirkPocApp extends StatelessWidget {
 }
 
 class MirkRuntimeScreen extends StatefulWidget {
-  const MirkRuntimeScreen({required this.pmtilesPathLoader, required this.locationService, super.key});
+  const MirkRuntimeScreen({required this.pmtilesPathLoader, required this.locationService, required this.shareLogService, super.key});
 
   final PmtilesPathLoader pmtilesPathLoader;
   final ForegroundLocationService locationService;
+  final ActiveLogShareService shareLogService;
 
   @override
   State<MirkRuntimeScreen> createState() => _MirkRuntimeScreenState();
@@ -99,15 +105,20 @@ class _MirkRuntimeScreenState extends State<MirkRuntimeScreen> with WidgetsBindi
 
   @override
   Widget build(BuildContext context) {
-    return PmtilesBootstrapScreen(pmtilesPathFuture: _pmtilesPathFuture, latestFixStream: widget.locationService.fixes);
+    return PmtilesBootstrapScreen(
+      pmtilesPathFuture: _pmtilesPathFuture,
+      latestFixStream: widget.locationService.fixes,
+      shareActiveLog: widget.shareLogService.shareActiveLog,
+    );
   }
 }
 
 class PmtilesBootstrapScreen extends StatelessWidget {
-  const PmtilesBootstrapScreen({required this.pmtilesPathFuture, this.latestFixStream, super.key});
+  const PmtilesBootstrapScreen({required this.pmtilesPathFuture, this.latestFixStream, this.shareActiveLog, super.key});
 
   final Future<String> pmtilesPathFuture;
   final Stream<GeoFix>? latestFixStream;
+  final ShareActiveLogCallback? shareActiveLog;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +134,7 @@ class PmtilesBootstrapScreen extends StatelessWidget {
               return const Text('Map data could not open. Restart the app or share the active log for diagnosis.');
             }
             return MapScreen(
-              services: MapScreenServices(pmtilesPath: snapshot.requireData, latestFixStream: latestFixStream),
+              services: MapScreenServices(pmtilesPath: snapshot.requireData, latestFixStream: latestFixStream, shareActiveLog: shareActiveLog),
             );
           },
         ),
