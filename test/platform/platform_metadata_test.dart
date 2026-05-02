@@ -4,8 +4,8 @@
 
 import 'dart:io';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:test/test.dart';
 
 void main() {
   group('platform metadata', () {
@@ -13,12 +13,14 @@ void main() {
     late String androidManifest;
     late String iosProject;
     late String iosInfoPlist;
+    late String iosPodfile;
 
     setUpAll(() {
       androidGradle = File(p.join('android', 'app', 'build.gradle.kts')).readAsStringSync();
       androidManifest = File(p.join('android', 'app', 'src', 'main', 'AndroidManifest.xml')).readAsStringSync();
       iosProject = File(p.join('ios', 'Runner.xcodeproj', 'project.pbxproj')).readAsStringSync();
       iosInfoPlist = File(p.join('ios', 'Runner', 'Info.plist')).readAsStringSync();
+      iosPodfile = File(p.join('ios', 'Podfile')).readAsStringSync();
     });
 
     test('locks Android application ID and display name', () {
@@ -42,6 +44,34 @@ void main() {
     test('declares no non-exempt encryption', () {
       final RegExp encryptionFalse = RegExp(r'<key>ITSAppUsesNonExemptEncryption</key>\s*<false\s*/>', multiLine: true);
       expect(encryptionFalse.hasMatch(iosInfoPlist), isTrue);
+    });
+
+    test('configures permission_handler for iOS foreground location', () {
+      expect(iosPodfile, contains('post_install do |installer|'));
+      expect(iosPodfile, contains("config.build_settings['GCC_PREPROCESSOR_DEFINITIONS']"));
+      expect(iosPodfile, contains("'PERMISSION_LOCATION=1'"));
+      expect(iosPodfile, isNot(contains('PERMISSION_NOTIFICATIONS=1')));
+      expect(iosPodfile, isNot(contains('PERMISSION_CAMERA=1')));
+    });
+
+    test('declares iOS foreground location usage only', () {
+      expect(iosInfoPlist, contains('<key>NSLocationWhenInUseUsageDescription</key>'));
+      expect(
+        iosInfoPlist,
+        contains('The POC uses your current position to draw the blue dot, reveal 25 m fog discs, and write evidence logs for the renderer test.'),
+      );
+      expect(iosInfoPlist, isNot(contains('NSLocationAlwaysAndWhenInUseUsageDescription')));
+      expect(iosInfoPlist, isNot(contains('NSLocationAlwaysUsageDescription')));
+      expect(iosInfoPlist, isNot(contains('<key>UIBackgroundModes</key>')));
+    });
+
+    test('declares Android foreground location permissions only', () {
+      expect(androidManifest, contains('android.permission.ACCESS_FINE_LOCATION'));
+      expect(androidManifest, contains('android.permission.ACCESS_COARSE_LOCATION'));
+      expect(androidManifest, isNot(contains('android.permission.ACCESS_BACKGROUND_LOCATION')));
+      expect(androidManifest, isNot(contains('android.permission.FOREGROUND_SERVICE')));
+      expect(androidManifest, isNot(contains('android.permission.FOREGROUND_SERVICE_LOCATION')));
+      expect(androidManifest, isNot(contains('android.permission.POST_NOTIFICATIONS')));
     });
   });
 }

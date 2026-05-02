@@ -28,6 +28,8 @@
 	<true/>
 	<key>MinimumOSVersion</key>
 	<string>13.0</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The POC uses your current position to draw the blue dot, reveal 25 m fog discs, and write evidence logs for the renderer test.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
