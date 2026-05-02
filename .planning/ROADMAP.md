@@ -35,6 +35,21 @@
 - Do not add parent architecture layers unless required to unblock the POC.
 - If copied MirkFall code depends on Freezed only for small records, prefer hand-written immutable classes to avoid generated-file friction.
 
+**Plans:** 3 plans in 3 waves
+
+Plans:
+- **Wave 1**
+  - [ ] `01-01-PLAN.md` - Create the mobile Flutter scaffold, locked app identity, strict analyzer baseline, GOSL license, and platform metadata tests.
+- **Wave 2** *(blocked on Wave 1 completion)*
+  - [ ] `01-02-PLAN.md` - Bundle `Fra_Melun.pmtile`, implement checksum-validating copy-to-app-support, and wire a focused launch proof.
+- **Wave 3** *(blocked on Waves 1-2 completion)*
+  - [ ] `01-03-PLAN.md` - Add header/license/dependency guard scripts, `DEPENDENCIES.md`, and the CI-01 gates workflow.
+
+Cross-cutting constraints:
+- All direct dependencies must be exact pins with a committed `pubspec.lock`.
+- Every committed Dart file must have the required GOSL three-line header.
+- Phase 1 must not add map/fog rendering, permission flow, logging/share diagnostics, or APK/IPA artifact jobs.
+
 ## Phase 2: Same-Pipeline Map And Fog
 
 **Goal:** Prove the core renderer hypothesis in-app: `flutter_map` vector tiles and atmospheric fog paint in the same Flutter map stack.
