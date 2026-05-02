@@ -12,7 +12,14 @@ void main() {
   final fixedAt = DateTime.utc(2026, 5, 2, 11);
 
   RevealDisc seed(String id) {
-    return RevealDisc(id: id, sessionId: 'seed', lat: kPocInitialLatitude, lon: kPocInitialLongitude, radiusMeters: kPocRevealDiscRadiusMeters, fixedAtUtc: fixedAt);
+    return RevealDisc(
+      id: id,
+      sessionId: 'seed',
+      lat: kPocInitialLatitude,
+      lon: kPocInitialLongitude,
+      radiusMeters: kPocRevealDiscRadiusMeters,
+      fixedAtUtc: fixedAt,
+    );
   }
 
   GeoFix fix({double latitude = 48.5401, double longitude = 2.6561}) {

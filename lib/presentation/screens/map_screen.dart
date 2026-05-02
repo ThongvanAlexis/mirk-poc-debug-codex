@@ -12,7 +12,9 @@ import 'package:vector_map_tiles_pmtiles/vector_map_tiles_pmtiles.dart';
 import 'package:vector_tile_renderer/vector_tile_renderer.dart' as vtr;
 
 import '../../config/constants.dart';
+import '../../domain/location/geo_fix.dart';
 import '../../domain/map/map_screen_services.dart';
+import '../../domain/revealed/reveal_disc_repository.dart';
 import '../../infrastructure/map/poc_map_theme.dart';
 import '../widgets/map_mode_toggle.dart';
 
@@ -29,8 +31,12 @@ class _MapScreenState extends State<MapScreen> {
   late final MapController _mapController;
   late final vtr.Theme _theme;
   late final Future<VectorTileProvider> _providerFuture;
+  late final RevealDiscRepository _revealDiscRepository;
+  late final bool _ownsRevealDiscRepository;
   late MapDisplayMode _mode;
   VectorTileProvider? _openedProvider;
+  GeoFix? _latestFix;
+  StreamSubscription<GeoFix>? _latestFixSubscription;
 
   @override
   void initState() {
@@ -38,14 +44,26 @@ class _MapScreenState extends State<MapScreen> {
     _mapController = MapController();
     _theme = createPocMapTheme();
     _mode = widget.services.initialDisplayMode;
+    _revealDiscRepository = widget.services.revealDiscRepository ?? RevealDiscRepository();
+    _ownsRevealDiscRepository = widget.services.revealDiscRepository == null;
+    final initialLatestFix = widget.services.initialLatestFix;
+    if (initialLatestFix != null && _revealDiscRepository.appendFix(initialLatestFix)) {
+      _latestFix = initialLatestFix;
+    }
+    _latestFixSubscription = widget.services.latestFixStream?.listen(_acceptLatestFix);
     _providerFuture = _openProvider();
   }
 
   @override
   void dispose() {
+    _latestFixSubscription?.cancel().ignore();
+    _latestFixSubscription = null;
     final VectorTileProvider? provider = _openedProvider;
     if (provider != null) {
       _disposeProvider(provider);
+    }
+    if (_ownsRevealDiscRepository) {
+      _revealDiscRepository.dispose();
     }
     _mapController.dispose();
     super.dispose();
@@ -116,6 +134,14 @@ class _MapScreenState extends State<MapScreen> {
     if (provider is PmTilesVectorTileProvider) {
       provider.archive.close().ignore();
     }
+  }
+
+  void _acceptLatestFix(GeoFix fix) {
+    if (!_revealDiscRepository.appendFix(fix)) return;
+    if (!mounted) return;
+    setState(() {
+      _latestFix = fix;
+    });
   }
 }
 
