@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: Phase 3 - Mobile Runtime And Artifacts
 status: planning
-last_updated: "2026-05-02T10:54:19.000Z"
+last_updated: "2026-05-02T11:35:10.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-05-02)
 
 **Core value:** Produce a defensible yes/no answer: does the fog stay visually locked to the map during pan, zoom, and combined pan+zoom gestures at 30+ fps on iOS?
-**Current focus:** Phase 2 same-pipeline renderer proof is complete; plan Phase 3 mobile runtime, permissions, logging/share diagnostics, and APK/IPA artifacts.
+**Current focus:** Phase 3 UI-SPEC is approved; plan Phase 3 mobile runtime, permissions, logging/share diagnostics, and APK/IPA artifacts using the UI design contract.
 
 ## Roadmap Progress
 
@@ -53,10 +53,11 @@ See: `.planning/PROJECT.md` (updated 2026-05-02)
 - Plan 02-03 completed parent-derived reveal geometry, 256x256 metre-space SDF bytes, projection, fog clip path, 41-slot shader uniforms, triangle wave, and deterministic SDF cache.
 - Plan 02-04 completed same-stack `FogLayer` mounting inside `FlutterMap.children`, seeded/latest-fix reveal discs, safe shader loading, blue dot, recenter, and final integration/static tests.
 - Phase 2 intentionally leaves permission rationale, durable synchronous file logging, and APK/IPA artifact jobs to Phase 3.
+- Phase 3 UI design contract approved in `.planning/phases/03-mobile-runtime-and-artifacts/03-UI-SPEC.md`, locking the permission rationale, denied/settings recovery, compact share-log/recenter/mode controls, atmospheric color contract, and evidence-first copy.
 
 ## Next Command
 
-Plan Phase 3 mobile runtime and artifacts.
+Plan Phase 3 mobile runtime and artifacts using the approved UI-SPEC.
 
 ---
-*Last updated: 2026-05-02 after Plan 02-04 execution*
+*Last updated: 2026-05-02 after Phase 3 UI-SPEC approval*
