@@ -13,11 +13,21 @@ void main() {
     workflow = File('.github/workflows/ci.yml').readAsStringSync();
   });
 
-  test('runs the required Phase 1 quality gates', () {
+  test('runs on manual dispatch, pull requests, and pushes to main', () {
+    for (final String required in <String>['workflow_dispatch:', 'pull_request:', 'push:', 'branches:', '- main']) {
+      expect(workflow, contains(required));
+    }
+  });
+
+  test('runs the required quality gates before artifact jobs', () {
+    final int androidIndex = workflow.indexOf('android-debug-apk:');
+    final int iosIndex = workflow.indexOf('ios-unsigned-ipa:');
+    final int firstArtifactIndex = androidIndex < iosIndex ? androidIndex : iosIndex;
+
+    expect(androidIndex, greaterThanOrEqualTo(0));
+    expect(iosIndex, greaterThanOrEqualTo(0));
+    expect(firstArtifactIndex, greaterThan(workflow.indexOf('gates:')));
     for (final String required in <String>[
-      'workflow_dispatch:',
-      'pull_request:',
-      'push:',
       'flutter pub get',
       'dart format --line-length 160 --set-exit-if-changed .',
       'flutter analyze --fatal-infos --fatal-warnings',
@@ -27,7 +37,9 @@ void main() {
       'dart test tool/test/',
       'flutter test',
     ]) {
-      expect(workflow, contains(required));
+      final int gateStepIndex = workflow.indexOf(required);
+      expect(gateStepIndex, greaterThanOrEqualTo(0), reason: required);
+      expect(gateStepIndex, lessThan(firstArtifactIndex), reason: required);
     }
   });
 
@@ -65,5 +77,7 @@ void main() {
     expect(workflow, contains('actions/upload-artifact@v4'));
     expect(workflow, contains('name: MirkFall-POC-unsigned-ios-ipa'));
     expect(workflow, contains('path: build/ios/MirkFall-POC-unsigned-ios.ipa'));
+    expect(workflow, isNot(contains('APPLE_CERTIFICATE')));
+    expect(workflow, isNot(contains('PROVISIONING_PROFILE')));
   });
 }
