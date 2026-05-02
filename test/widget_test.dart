@@ -2,19 +2,26 @@
 // Licensed under the Good Old Software License v1.0
 // See LICENSE file for details
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
+import 'package:mirk_poc_debug/infrastructure/location/foreground_location_service.dart';
 import 'package:mirk_poc_debug/infrastructure/permissions/location_permission_service.dart';
-import 'package:mirk_poc_debug/main.dart';
 import 'package:mirk_poc_debug/infrastructure/pmtiles/pmtiles_asset_copier.dart';
+import 'package:mirk_poc_debug/main.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
 
 void main() {
   testWidgets('routes copied PMTiles path into MapScreen on startup success', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MirkPocApp(pmtilesPathFuture: Future<String>.value('/support/maps/Fra_Melun.pmtile'), permissionService: _grantedPermissionService()),
+      MirkPocApp(
+        pmtilesPathFuture: Future<String>.value('/support/maps/Fra_Melun.pmtile'),
+        permissionService: _grantedPermissionService(),
+        locationService: _quietLocationService(),
+      ),
     );
     await tester.pump();
 
@@ -25,7 +32,11 @@ void main() {
 
   testWidgets('renders focused PMTiles copy error on startup failure', (WidgetTester tester) async {
     await tester.pumpWidget(
-      MirkPocApp(pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom')), permissionService: _grantedPermissionService()),
+      MirkPocApp(
+        pmtilesPathFuture: Future<String>.error(const PmtilesAssetCopyException('boom')),
+        permissionService: _grantedPermissionService(),
+        locationService: _quietLocationService(),
+      ),
     );
     await tester.pump();
 
@@ -76,4 +87,8 @@ LocationPermissionService _grantedPermissionService() {
     requestWhenInUse: () async => LocationPermissionState.granted,
     openSettings: () async => true,
   );
+}
+
+ForegroundLocationService _quietLocationService() {
+  return ForegroundLocationService(positionStreamFactory: (_) => const Stream<Position>.empty());
 }

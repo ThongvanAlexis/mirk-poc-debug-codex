@@ -6,7 +6,9 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 
+import 'domain/location/geo_fix.dart';
 import 'domain/map/map_screen_services.dart';
+import 'infrastructure/location/foreground_location_service.dart';
 import 'infrastructure/logging/file_logger.dart';
 import 'infrastructure/logging/file_logger_lifecycle_observer.dart';
 import 'infrastructure/permissions/location_permission_service.dart';
@@ -28,13 +30,20 @@ Future<void> main() async {
 }
 
 class MirkPocApp extends StatelessWidget {
-  MirkPocApp({Future<String>? pmtilesPathFuture, PmtilesPathLoader? pmtilesPathLoader, LocationPermissionService? permissionService, super.key})
-    : assert(pmtilesPathFuture == null || pmtilesPathLoader == null, 'Use either pmtilesPathFuture or pmtilesPathLoader, not both.'),
-      _pmtilesPathLoader = pmtilesPathLoader ?? (() => pmtilesPathFuture ?? ensureFlutterPmtilesAssetCopied()),
-      _permissionService = permissionService ?? LocationPermissionService();
+  MirkPocApp({
+    Future<String>? pmtilesPathFuture,
+    PmtilesPathLoader? pmtilesPathLoader,
+    LocationPermissionService? permissionService,
+    ForegroundLocationService? locationService,
+    super.key,
+  }) : assert(pmtilesPathFuture == null || pmtilesPathLoader == null, 'Use either pmtilesPathFuture or pmtilesPathLoader, not both.'),
+       _pmtilesPathLoader = pmtilesPathLoader ?? (() => pmtilesPathFuture ?? ensureFlutterPmtilesAssetCopied()),
+       _permissionService = permissionService ?? LocationPermissionService(),
+       _locationService = locationService ?? ForegroundLocationService();
 
   final PmtilesPathLoader _pmtilesPathLoader;
   final LocationPermissionService _permissionService;
+  final ForegroundLocationService _locationService;
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +52,62 @@ class MirkPocApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
       home: PermissionGateScreen(
         permissionService: _permissionService,
-        grantedBuilder: (BuildContext context) => PmtilesBootstrapScreen(pmtilesPathFuture: _pmtilesPathLoader()),
+        grantedBuilder: (BuildContext context) => MirkRuntimeScreen(pmtilesPathLoader: _pmtilesPathLoader, locationService: _locationService),
       ),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
+class MirkRuntimeScreen extends StatefulWidget {
+  const MirkRuntimeScreen({required this.pmtilesPathLoader, required this.locationService, super.key});
+
+  final PmtilesPathLoader pmtilesPathLoader;
+  final ForegroundLocationService locationService;
+
+  @override
+  State<MirkRuntimeScreen> createState() => _MirkRuntimeScreenState();
+}
+
+class _MirkRuntimeScreenState extends State<MirkRuntimeScreen> with WidgetsBindingObserver {
+  late final Future<String> _pmtilesPathFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _pmtilesPathFuture = widget.pmtilesPathLoader();
+    widget.locationService.start();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      widget.locationService.start();
+      return;
+    }
+    widget.locationService.stop(reason: 'lifecycle_${state.name}').ignore();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    widget.locationService.dispose().ignore();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PmtilesBootstrapScreen(pmtilesPathFuture: _pmtilesPathFuture, latestFixStream: widget.locationService.fixes);
+  }
+}
+
 class PmtilesBootstrapScreen extends StatelessWidget {
-  const PmtilesBootstrapScreen({required this.pmtilesPathFuture, super.key});
+  const PmtilesBootstrapScreen({required this.pmtilesPathFuture, this.latestFixStream, super.key});
 
   final Future<String> pmtilesPathFuture;
+  final Stream<GeoFix>? latestFixStream;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +122,9 @@ class PmtilesBootstrapScreen extends StatelessWidget {
             if (snapshot.hasError) {
               return const Text('Map data could not open. Restart the app or share the active log for diagnosis.');
             }
-            return MapScreen(services: MapScreenServices(pmtilesPath: snapshot.requireData));
+            return MapScreen(
+              services: MapScreenServices(pmtilesPath: snapshot.requireData, latestFixStream: latestFixStream),
+            );
           },
         ),
       ),

@@ -3,6 +3,7 @@
 // See LICENSE file for details
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:mirk_poc_debug/domain/location/geo_fix.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/domain/revealed/reveal_disc.dart';
 import 'package:mirk_poc_debug/domain/revealed/reveal_disc_repository.dart';
+import 'package:mirk_poc_debug/infrastructure/location/foreground_location_service.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 
@@ -71,6 +73,25 @@ void main() {
     expect(repository.snapshot(), hasLength(1));
     expect(repository.snapshot().single.lat, equals(48.541));
     expect(repository.snapshot().single.lon, equals(2.657));
+  });
+
+  test('presentation map and fog code do not import location or permission plugins', () {
+    final mapScreenSource = File('lib/presentation/screens/map_screen.dart').readAsStringSync();
+    final fogLayerSource = File('lib/presentation/widgets/fog_layer.dart').readAsStringSync();
+    final repositorySource = File('lib/domain/revealed/reveal_disc_repository.dart').readAsStringSync();
+
+    expect(mapScreenSource, isNot(contains('package:geolocator')));
+    expect(mapScreenSource, isNot(contains('package:permission_handler')));
+    expect(fogLayerSource, isNot(contains('package:geolocator')));
+    expect(repositorySource, isNot(contains('package:permission_handler')));
+  });
+
+  test('runtime shell wires foreground location fixes into MapScreenServices', () {
+    final source = File('lib/main.dart').readAsStringSync();
+
+    expect(source, contains('ForegroundLocationService'));
+    expect(source, contains('locationService.start()'));
+    expect(source, contains('latestFixStream: widget.locationService.fixes'));
   });
 }
 
