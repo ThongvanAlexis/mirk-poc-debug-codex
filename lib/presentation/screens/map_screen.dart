@@ -13,6 +13,8 @@ import 'package:vector_tile_renderer/vector_tile_renderer.dart' as vtr;
 
 import '../../config/constants.dart';
 import '../../domain/map/map_screen_services.dart';
+import '../../infrastructure/map/poc_map_theme.dart';
+import '../widgets/map_mode_toggle.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({required this.services, super.key});
@@ -27,13 +29,15 @@ class _MapScreenState extends State<MapScreen> {
   late final MapController _mapController;
   late final vtr.Theme _theme;
   late final Future<VectorTileProvider> _providerFuture;
+  late MapDisplayMode _mode;
   VectorTileProvider? _openedProvider;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-    _theme = ProtomapsThemes.lightV3();
+    _theme = createPocMapTheme();
+    _mode = widget.services.initialDisplayMode;
     _providerFuture = _openProvider();
   }
 
@@ -59,10 +63,30 @@ class _MapScreenState extends State<MapScreen> {
           if (snapshot.hasError) {
             return const Center(child: Text('Map open failed'));
           }
-          return FlutterMap(
-            mapController: _mapController,
-            options: createPocMapOptions(),
-            children: createPocMapChildren(tileProvider: snapshot.requireData, theme: _theme),
+          return Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: FlutterMap(
+                  mapController: _mapController,
+                  options: createPocMapOptions(),
+                  children: createPocMapChildren(tileProvider: snapshot.requireData, theme: _theme),
+                ),
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: SafeArea(
+                  child: MapModeToggle(
+                    mode: _mode,
+                    onChanged: (MapDisplayMode mode) {
+                      setState(() {
+                        _mode = mode;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),

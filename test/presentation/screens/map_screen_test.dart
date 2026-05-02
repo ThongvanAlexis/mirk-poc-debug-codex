@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mirk_poc_debug/config/constants.dart';
 import 'package:mirk_poc_debug/domain/map/map_screen_services.dart';
 import 'package:mirk_poc_debug/presentation/screens/map_screen.dart';
+import 'package:mirk_poc_debug/presentation/widgets/map_mode_toggle.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 
 void main() {
@@ -80,6 +81,31 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
 
     expect(disposedProviders, <VectorTileProvider>[provider]);
+  });
+
+  testWidgets('keeps map layer mounted while switching the map-ready fog mode', (WidgetTester tester) async {
+    final _RecordingVectorTileProvider provider = _RecordingVectorTileProvider();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MapScreen(
+          services: MapScreenServices(pmtilesPath: '/support/maps/Fra_Melun.pmtile', tileProviderFactory: (String pmtilesPath) async => provider),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    SegmentedButton<MapDisplayMode> button = tester.widget<SegmentedButton<MapDisplayMode>>(find.byType(SegmentedButton<MapDisplayMode>));
+    expect(button.selected, <MapDisplayMode>{MapDisplayMode.mapOnly});
+    expect(find.byType(VectorTileLayer), findsOneWidget);
+
+    await tester.tap(find.text('Fog'));
+    await tester.pump();
+
+    button = tester.widget<SegmentedButton<MapDisplayMode>>(find.byType(SegmentedButton<MapDisplayMode>));
+    expect(button.selected, <MapDisplayMode>{MapDisplayMode.mapWithFog});
+    expect(find.byType(MapModeToggle), findsOneWidget);
+    expect(find.byType(VectorTileLayer), findsOneWidget);
   });
 
   testWidgets('rejects remote PMTiles sources before provider construction', (WidgetTester tester) async {
