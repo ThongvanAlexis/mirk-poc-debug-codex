@@ -4,7 +4,9 @@
 
 import 'package:flutter/material.dart';
 
+import 'domain/map/map_screen_services.dart';
 import 'infrastructure/pmtiles/flutter_pmtiles_asset_copier.dart';
+import 'presentation/screens/map_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,10 +47,7 @@ class PmtilesBootstrapScreen extends StatelessWidget {
             if (snapshot.hasError) {
               return const Text('PMTiles copy failed');
             }
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[const Text('PMTiles ready'), const SizedBox(height: 8), SelectableText(snapshot.requireData)],
-            );
+            return MapScreen(services: MapScreenServices(pmtilesPath: snapshot.requireData));
           },
         ),
       ),
