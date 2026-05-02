@@ -77,3 +77,40 @@ jobs:
           name: MirkFall-POC-android-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
+
+  ios-unsigned-ipa:
+    name: Unsigned iOS IPA
+    runs-on: macos-latest
+    needs: gates
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.7'
+          channel: stable
+          cache: true
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Build unsigned iOS app
+        run: flutter build ios --no-codesign
+
+      - name: Package unsigned IPA
+        run: |
+          rm -rf build/ios/ipa
+          mkdir -p build/ios/ipa/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/ipa/Payload/Runner.app
+          (cd build/ios/ipa && zip -qry ../MirkFall-POC-unsigned-ios.ipa Payload)
+
+      - name: Upload unsigned iOS IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: MirkFall-POC-unsigned-ios-ipa
+          path: build/ios/MirkFall-POC-unsigned-ios.ipa
+          if-no-files-found: error

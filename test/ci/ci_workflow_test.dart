@@ -46,4 +46,24 @@ void main() {
     expect(workflow, contains('name: MirkFall-POC-android-debug-apk'));
     expect(workflow, contains('path: build/app/outputs/flutter-apk/app-debug.apk'));
   });
+
+  test('builds and uploads an unsigned SideStore-shaped iOS IPA after gates', () {
+    final int gatesIndex = workflow.indexOf('gates:');
+    final int iosIndex = workflow.indexOf('ios-unsigned-ipa:');
+
+    expect(gatesIndex, greaterThanOrEqualTo(0));
+    expect(iosIndex, greaterThan(gatesIndex));
+    expect(workflow, contains('runs-on: macos-latest'));
+    expect(workflow, contains('needs: gates'));
+    expect(workflow, contains("flutter-version: '3.41.7'"));
+    expect(workflow, contains('flutter pub get'));
+    expect(workflow, contains('flutter build ios --no-codesign'));
+    expect(workflow, isNot(contains('flutter build ipa')));
+    expect(workflow, contains('mkdir -p build/ios/ipa/Payload'));
+    expect(workflow, contains('cp -R build/ios/iphoneos/Runner.app build/ios/ipa/Payload/Runner.app'));
+    expect(workflow, contains('MirkFall-POC-unsigned-ios.ipa'));
+    expect(workflow, contains('actions/upload-artifact@v4'));
+    expect(workflow, contains('name: MirkFall-POC-unsigned-ios-ipa'));
+    expect(workflow, contains('path: build/ios/MirkFall-POC-unsigned-ios.ipa'));
+  });
 }
