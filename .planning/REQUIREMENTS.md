@@ -26,7 +26,7 @@
 
 - [x] **FOG-01**: App includes `assets/shaders/atmospheric_fog.frag` copied from MirkFall without visual simplification.
 - [x] **FOG-02**: App ports or minimally adapts MirkFall reveal disc, viewport bbox, SDF builder, projection, clip path, shader uniform, animation helper, and relevant fog constants.
-- [ ] **FOG-03**: App renders the fog as a `flutter_map` custom Flutter layer in the same map child stack as the vector tiles.
+- [x] **FOG-03**: App renders the fog as a `flutter_map` custom Flutter layer in the same map child stack as the vector tiles.
 - [x] **FOG-04**: Fog layer builds a 256x256 SDF image from reveal discs using metre-space distance.
 - [x] **FOG-05**: Fog layer binds 41 float uniforms and one SDF sampler according to the MirkFall shader layout.
 - [x] **FOG-06**: Fog layer clips the shader rect to unrevealed map area using reveal-disc screen geometry.
@@ -37,9 +37,9 @@
 - [ ] **LOC-01**: On first launch, user sees a foreground location permission rationale screen before the map.
 - [ ] **LOC-02**: On grant, user reaches the map and the app starts foreground location updates.
 - [ ] **LOC-03**: On deny or permanent deny, user sees a denied state with a system settings action.
-- [ ] **LOC-04**: App renders the latest GPS position as a blue dot above the fog.
-- [ ] **LOC-05**: App creates an in-memory 25 m reveal disc for each accepted GPS fix.
-- [ ] **LOC-06**: User can tap a recenter control that animates the map to the latest GPS fix at zoom `15`.
+- [x] **LOC-04**: App renders the latest GPS position as a blue dot above the fog.
+- [x] **LOC-05**: App creates an in-memory 25 m reveal disc for each accepted GPS fix.
+- [x] **LOC-06**: User can tap a recenter control that animates the map to the latest GPS fix at zoom `15`.
 
 ### Logging And Diagnostics
 
@@ -114,7 +114,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MAP-06 | Phase 2 | Complete |
 | FOG-01 | Phase 2 | Complete |
 | FOG-02 | Phase 2 | Complete |
-| FOG-03 | Phase 2 | Pending |
+| FOG-03 | Phase 2 | Complete |
 | FOG-04 | Phase 2 | Complete |
 | FOG-05 | Phase 2 | Complete |
 | FOG-06 | Phase 2 | Complete |
@@ -122,9 +122,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOC-01 | Phase 3 | Pending |
 | LOC-02 | Phase 3 | Pending |
 | LOC-03 | Phase 3 | Pending |
-| LOC-04 | Phase 2 | Pending |
-| LOC-05 | Phase 2 | Pending |
-| LOC-06 | Phase 2 | Pending |
+| LOC-04 | Phase 2 | Complete |
+| LOC-05 | Phase 2 | Complete |
+| LOC-06 | Phase 2 | Complete |
 | LOG-01 | Phase 3 | Pending |
 | LOG-02 | Phase 3 | Pending |
 | LOG-03 | Phase 3 | Pending |
@@ -152,4 +152,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-05-02*
-*Last updated: 2026-05-02 after Plan 02-03 execution*
+*Last updated: 2026-05-02 after Plan 02-04 execution*

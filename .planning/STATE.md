@@ -2,36 +2,36 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: Phase 2 - Same-Pipeline Map And Fog
-status: executing
-last_updated: "2026-05-02T10:31:47.000Z"
+current_phase: Phase 3 - Mobile Runtime And Artifacts
+status: planning
+last_updated: "2026-05-02T10:54:19.000Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
 
 **Project:** MirkFall Flutter Map Fog POC
 **Initialized:** 2026-05-02
-**Current phase:** Phase 2 - Same-Pipeline Map And Fog
-**Status:** Executing
+**Current phase:** Phase 3 - Mobile Runtime And Artifacts
+**Status:** Planning
 
 ## Project Reference
 
 See: `.planning/PROJECT.md` (updated 2026-05-02)
 
 **Core value:** Produce a defensible yes/no answer: does the fog stay visually locked to the map during pan, zoom, and combined pan+zoom gestures at 30+ fps on iOS?
-**Current focus:** Continue Phase 2 by mounting fog in the same `FlutterMap` stack.
+**Current focus:** Phase 2 same-pipeline renderer proof is complete; plan Phase 3 mobile runtime, permissions, logging/share diagnostics, and APK/IPA artifacts.
 
 ## Roadmap Progress
 
 | Phase | Status | Plans | Progress |
 |-------|--------|-------|----------|
 | 1 | Completed | 3/3 | 100% |
-| 2 | Executing | 3/4 | 75% |
+| 2 | Completed | 4/4 | 100% |
 | 3 | Pending | 0/0 | 0% |
 | 4 | Pending | 0/0 | 0% |
 
@@ -51,11 +51,12 @@ See: `.planning/PROJECT.md` (updated 2026-05-02)
 - Plan 02-01 completed the exact dependency graph, copied atmospheric shader asset, dependency audit update, and renderer-critical constants/tests.
 - Plan 02-02 completed offline Melun PMTiles rendering through `FlutterMap`/`VectorTileLayer`, custom no-sprite neutral styling, and a map-only/map+fog toggle seam.
 - Plan 02-03 completed parent-derived reveal geometry, 256x256 metre-space SDF bytes, projection, fog clip path, 41-slot shader uniforms, triangle wave, and deterministic SDF cache.
+- Plan 02-04 completed same-stack `FogLayer` mounting inside `FlutterMap.children`, seeded/latest-fix reveal discs, safe shader loading, blue dot, recenter, and final integration/static tests.
 - Phase 2 intentionally leaves permission rationale, durable synchronous file logging, and APK/IPA artifact jobs to Phase 3.
 
 ## Next Command
 
-Continue Phase 2 with Plan 02-04 same-stack fog integration.
+Plan Phase 3 mobile runtime and artifacts.
 
 ---
-*Last updated: 2026-05-02 after Plan 02-03 execution*
+*Last updated: 2026-05-02 after Plan 02-04 execution*
